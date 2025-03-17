@@ -85,6 +85,7 @@ export default function RootLayout({
                     🌊 React Server Components
                   </ActiveLink>
                   <ActiveLink href="/langgraph">🕸️ LangGraph</ActiveLink>
+                  <ActiveLink href="/web3-agent">💰 Web3 Agent</ActiveLink>
                 </nav>
               </div>
 
