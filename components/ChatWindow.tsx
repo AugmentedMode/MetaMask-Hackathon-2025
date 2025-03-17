@@ -191,7 +191,6 @@ export function ChatWindow(props: {
     body: {
       show_intermediate_steps: showIntermediateSteps,
     },
-    id: props.inputValue,
     initialInput: props.inputValue,
     onResponse(response) {
       const sourcesHeader = response.headers.get("x-sources");
