@@ -57,7 +57,7 @@ export default function Web3AgentPage() {
     <ChatWindow
       endpoint="api/chat/web3_agent"
       emoji="💰"
-      placeholder="I'm a Web3 assistant! Ask me about crypto, DeFi, or your blockchain portfolio..."
+      placeholder="I&apos;m a Web3 assistant! Ask me about crypto, DeFi, or your blockchain portfolio..."
       emptyStateComponent={InfoCard}
       showIntermediateStepsToggle={true}
       inputValue={input}
