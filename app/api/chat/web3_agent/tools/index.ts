@@ -60,14 +60,14 @@ export const getTransactionHistoryTool = new DynamicStructuredTool({
 
 // Gas usage analysis tool
 export const analyzeGasUsageTool = new DynamicStructuredTool({
-  name: "analyze_gas_usage",
-  description: "Analyze gas usage and provide optimization suggestions",
+  name: "compute_gas_fees_used",
+  description: "Compute gas fees that the user has used to perform their transactions, in a given period of time and offer advice on optimizing gas fee costs in the future.",
   schema: z.object({
-    address: z.string().optional().describe("Ethereum address to check (optional)"),
-    chain: z.string().optional().describe("Blockchain name (optional, default: Ethereum)"),
-    period: z.string().optional().describe("Time period to analyze (e.g., 'week', 'month', 'year', default: 'month')"),
+    address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Public address").describe("Public address, starting with 0x"),
+    period: z.string().describe("Time period to analyze (e.g., 'day', 'week', 'month', 'year')"),
+    chain: z.string().optional().describe("Network name (optional, default: Ethereum)"),
   }),
-  func: async ({ address, chain = "Ethereum", period = "month" }) => {
+  func: async ({ address, chain = "Ethereum", period }) => {
     const data = await dataService.getGasAnalysis(address, chain, period);
     return JSON.stringify(data);
   },

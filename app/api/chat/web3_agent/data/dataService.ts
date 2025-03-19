@@ -154,7 +154,7 @@ export const getTransactionHistory = async (
 
 // Fetch gas usage analysis
 export const getGasAnalysis = async (
-  address?: string,
+  address: string,
   chain: string = 'Ethereum',
   period: string = 'month'
 ): Promise<GasAnalysis> => {
