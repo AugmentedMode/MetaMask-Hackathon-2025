@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { GithubIcon } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import Image from "next/image";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -63,30 +64,7 @@ export default function RootLayout({
           <div className="bg-secondary grid grid-rows-[auto,1fr] h-[100dvh]">
             <div className="grid grid-cols-[1fr,auto] gap-2 p-4">
               <div className="flex gap-4 flex-col md:flex-row md:items-center">
-                <a
-                  href="https://js.langchain.com"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className="flex items-center gap-2"
-                >
-                  <Logo />
-                </a>
-                <nav className="flex gap-1 flex-col md:flex-row">
-                  <ActiveLink href="/">🏴‍☠️ Chat</ActiveLink>
-                  <ActiveLink href="/structured_output">
-                    🧱 Structured Output
-                  </ActiveLink>
-                  <ActiveLink href="/agents">🦜 Agents</ActiveLink>
-                  <ActiveLink href="/retrieval">🐶 Retrieval</ActiveLink>
-                  <ActiveLink href="/retrieval_agents">
-                    🤖 Retrieval Agents
-                  </ActiveLink>
-                  <ActiveLink href="/ai_sdk">
-                    🌊 React Server Components
-                  </ActiveLink>
-                  <ActiveLink href="/langgraph">🕸️ LangGraph</ActiveLink>
-                  <ActiveLink href="/web3-agent">💰 Web3 Agent</ActiveLink>
-                </nav>
+                <Image src="/images/MetaMask-icon-Fox.svg" alt="Logo" width={40} height={40} />
               </div>
 
               <div className="flex justify-center">
