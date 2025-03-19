@@ -59,10 +59,6 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 
-  p {
-    margin: 8px 0;
-  }
-
   code {
     @apply dark:text-orange-400 text-orange-700;
   }

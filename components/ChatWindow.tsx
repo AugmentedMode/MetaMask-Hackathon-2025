@@ -77,7 +77,7 @@ export function ChatInput(props: {
       }}
       className={cn("flex w-full flex-col", props.className)}
     >
-      <div className="border border-input bg-secondary rounded-lg flex flex-col gap-2 max-w-[768px] w-full mx-auto">
+      <div className="border border-input bg-white text-black rounded-lg flex flex-col gap-2 max-w-[768px] w-full mx-auto">
         <input
           value={props.value}
           placeholder={props.placeholder}
@@ -90,7 +90,7 @@ export function ChatInput(props: {
 
           <div className="flex gap-2 self-end">
             {props.actions}
-            <Button type="submit" className="self-end" disabled={disabled}>
+            <Button type="submit" className="self-end" disabled={disabled} variant={"secondary"}>
               {props.loading ? (
                 <span role="status" className="flex justify-center">
                   <LoaderCircle className="animate-spin" />
@@ -177,7 +177,7 @@ export function ChatWindow(props: {
   onInputChange?: (value: string) => void;
 }) {
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(
-    !!props.showIntermediateStepsToggle,
+    false,
   );
   const [intermediateStepsLoading, setIntermediateStepsLoading] =
     useState(false);
@@ -377,6 +377,7 @@ export function ChatWindow(props: {
             {props.showIntermediateStepsToggle && (
               <div className="flex items-center gap-2">
                 <Checkbox
+                  className="border-black"
                   id="show_intermediate_steps"
                   name="show_intermediate_steps"
                   checked={showIntermediateSteps}
