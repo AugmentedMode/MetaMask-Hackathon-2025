@@ -241,6 +241,7 @@ export function ChatWindow(props: {
       } as unknown as FormEvent<HTMLFormElement>;
       
       await chat.handleSubmit(fakeEvent);
+      props.onInputChange?.(""); // Clear input after submit
       return;
     }
 
