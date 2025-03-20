@@ -80,6 +80,24 @@ export function ChatInput(props: {
   actions?: ReactNode;
 }) {
   const disabled = props.loading && props.onStop == null;
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && !disabled) {
+      e.preventDefault();
+      
+      const fakeEvent = {
+        preventDefault: () => {},
+        stopPropagation: () => {},
+      } as unknown as FormEvent<HTMLFormElement>;
+      
+      if (props.loading) {
+        props.onStop?.();
+      } else {
+        props.onSubmit(fakeEvent);
+      }
+    }
+  };
+  
   return (
     <form
       onSubmit={(e) => {
@@ -99,6 +117,7 @@ export function ChatInput(props: {
           value={props.value}
           placeholder={props.placeholder}
           onChange={props.onChange}
+          onKeyDown={handleKeyDown}
           className="border-none outline-none bg-transparent p-4"
         />
 
