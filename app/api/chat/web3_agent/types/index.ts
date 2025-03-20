@@ -58,21 +58,16 @@ export interface GasAnalysis {
   total_gas_spent_usd: number;
   transaction_count: number;
   average_gas_per_tx_usd: number;
-  highest_gas_tx: {
-    hash: string;
-    gas_fee_usd: number;
-    timestamp: string;
-    type: string;
-  };
+  highest_gas_tx: Transaction;
   gas_by_type: {
     [type: string]: GasByType;
   };
-  optimization_tips: string[];
-  current_gas_prices: {
-    slow: GasPrice;
-    average: GasPrice;
-    fast: GasPrice;
-  };
+  // optimization_tips: string[];
+  // current_gas_prices: {
+  //   slow: GasPrice;
+  //   average: GasPrice;
+  //   fast: GasPrice;
+  // };
 }
 
 // Portfolio analysis types
