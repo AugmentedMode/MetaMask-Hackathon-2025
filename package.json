@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write \"app\""
+    "format": "prettier --write \"app\"",
+    "test": "echo \"No tests configured\" && exit 0"
   },
   "engines": {
     "node": ">=18"
@@ -30,6 +31,7 @@
     "ai": "^3.1.12",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "csv-parse": "^5.6.0",
     "langchain": "^0.3.11",
     "lucide-react": "^0.473.0",
     "next": "^15.1.5",

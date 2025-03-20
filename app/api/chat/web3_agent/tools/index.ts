@@ -2,6 +2,7 @@ import { DynamicStructuredTool } from "@langchain/core/tools";
 import { Calculator } from "@langchain/community/tools/calculator";
 import { z } from "zod";
 import * as dataService from "../data/dataService";
+import { createTokenSwapTool } from "./tokenSwap";
 
 // Get portfolio balances tool
 export const getPortfolioBalancesTool = new DynamicStructuredTool({
@@ -149,4 +150,5 @@ export const tools = [
   searchHistoricalTransactionsTool,
   resolveIdentityTool,
   analyzeProtocolTVLTool,
+  createTokenSwapTool,
 ]; 
