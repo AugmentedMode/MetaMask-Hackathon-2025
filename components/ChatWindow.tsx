@@ -48,7 +48,7 @@ function ChatMessages(props: {
 
   return (
     <div className={`overflow-auto` + (props.className ? ` ${props.className}` : "")}>
-      <div className="relative flex flex-col gap-6 p-8 pb-56">
+      <div className="flex flex-col max-w-[768px] mx-auto pb-12 w-full pt-8">
         {props.messages
           .filter((m) => m.role !== "system")
           .map((message) => {
@@ -107,14 +107,14 @@ export function ChatInput(props: {
 
           <div className="flex gap-2 self-end">
             {props.actions}
-            <Button type="submit" className="self-end" disabled={disabled} variant={"secondary"}>
+            <Button type="submit" className="self-end" disabled={disabled}>
               {props.loading ? (
                 <span role="status" className="flex justify-center">
                   <LoaderCircle className="animate-spin" />
                   <span className="sr-only">Loading...</span>
                 </span>
               ) : (
-                <span>Send</span>
+                <span className="font-bold">Send</span>
               )}
             </Button>
           </div>
@@ -368,6 +368,7 @@ export function ChatWindow(props: {
   async function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     await submitMessage();
+    props.onInputChange?.("");
   }
 
   return (
@@ -395,6 +396,7 @@ export function ChatWindow(props: {
             onSubmit={handleFormSubmit}
             loading={chat.isLoading || intermediateStepsLoading}
             placeholder={props.placeholder ?? "What's it like to be a pirate?"}
+            className="mb-4"
           >
             {props.showIngestForm && (
               <Dialog>

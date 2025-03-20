@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { useWallet } from './WalletContext';
+import Image from 'next/image';
 
 // Add TypeScript declarations for Ethereum provider
 declare global {
@@ -88,8 +89,9 @@ export function ConnectWallet() {
       {isConnected ? (
         <Button 
           onClick={disconnectWallet}
-          variant="outline"
+          className="bg-primary text-white"
         >
+          <Image src="/images/MetaMask-icon-Fox.svg" alt="MetaMask" width={20} height={20} />
           {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
         </Button>
       ) : (
