@@ -80,26 +80,20 @@ export function ChatInput(props: {
   actions?: ReactNode;
 }) {
   const disabled = props.loading && props.onStop == null;
+  const formRef = useRef<HTMLFormElement>(null);
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Submit on Enter, but allow Shift+Enter for newlines
     if (e.key === 'Enter' && !e.shiftKey && !disabled) {
       e.preventDefault();
-      
-      const fakeEvent = {
-        preventDefault: () => {},
-        stopPropagation: () => {},
-      } as unknown as FormEvent<HTMLFormElement>;
-      
-      if (props.loading) {
-        props.onStop?.();
-      } else {
-        props.onSubmit(fakeEvent);
-      }
+      // Programmatically submit the form
+      formRef.current?.requestSubmit();
     }
   };
   
   return (
     <form
+      ref={formRef}
       onSubmit={(e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -119,6 +113,7 @@ export function ChatInput(props: {
           onChange={props.onChange}
           onKeyDown={handleKeyDown}
           className="border-none outline-none bg-transparent p-4"
+          disabled={disabled}
         />
 
         <div className="flex justify-between ml-4 mr-2 mb-2">
