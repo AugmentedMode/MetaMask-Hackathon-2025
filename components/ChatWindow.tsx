@@ -107,14 +107,14 @@ export function ChatInput(props: {
 
           <div className="flex gap-2 self-end">
             {props.actions}
-            <Button type="submit" className="self-end" disabled={disabled} variant={"secondary"}>
+            <Button type="submit" className="self-end" disabled={disabled}>
               {props.loading ? (
                 <span role="status" className="flex justify-center">
                   <LoaderCircle className="animate-spin" />
                   <span className="sr-only">Loading...</span>
                 </span>
               ) : (
-                <span>Send</span>
+                <span className="font-bold">Send</span>
               )}
             </Button>
           </div>
@@ -368,6 +368,7 @@ export function ChatWindow(props: {
   async function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     await submitMessage();
+    props.onInputChange?.("");
   }
 
   return (

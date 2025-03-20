@@ -11,13 +11,13 @@ export function SuggestionButtons({
   onSuggestionClick
 }: SuggestionButtonsProps) {
   return (
-    <div className="flex flex-wrap gap-2 max-w-[768px] mx-auto mb-4">
+    <div className="flex flex-wrap justify-center gap-4 max-w-[900px] mx-auto mb-6 mt-2">
       {suggestions.map((suggestion, index) => (
         <Button
           key={index}
           variant="outline"
           size="sm"
-          className="bg-white/10 hover:bg-white/20 text-sm transition-colors"
+          className="bg-slate-100 text-primary hover:bg-slate-200 text-sm transition-colors rounded-md font-medium border-0 px-5 py-2.5"
           onClick={() => onSuggestionClick(suggestion)}
         >
           {suggestion}

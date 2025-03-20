@@ -12,10 +12,10 @@ export default function Web3AgentPage() {
   const suggestions = [
     "What tokens do I have in my portfolio?",
     "What are the best yields for ETH?",
+    "What's the gas price right now?",
     "Show me the price of ETH in the last 24 hours",
     "Explain how liquidity pools work",
     "How do I bridge assets to Layer 2?",
-    "What's the gas price right now?"
   ];
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -24,32 +24,10 @@ export default function Web3AgentPage() {
 
   const InfoCard = (
     <GuideInfoBox>
-      <ul>
-        <li className="text-l">
-          💰
-          <span className="ml-2">
-            This is the MetaMask Assistant chatbot, a helpful Web3 agent that specializes in cryptocurrency, DeFi, and blockchain information.
-          </span>
-        </li>
-        <li className="hidden text-l md:block">
-          🤖
-          <span className="ml-2">
-            The Web3 agent can help with portfolio analysis, token prices, DeFi yields, transaction history, and more.
-          </span>
-        </li>
-        <li className="hidden text-l md:block">
-          🔧
-          <span className="ml-2">
-            The agent is powered by LangChain's ReAct agent framework with custom Web3 tools.
-          </span>
-        </li>
-        <li className="text-l">
-          👇
-          <span className="ml-2">
-            Try asking e.g. <code>What tokens do I have in my portfolio?</code> or <code>What are the best yields for ETH?</code>
-          </span>
-        </li>
-      </ul>
+      <div className="flex flex-col items-center text-center py-4 text-primary">
+        <h1 className="text-4xl font-bold mb-4">What can I help with onchain?</h1>
+        <p className="text-xl">Ask anything about your assets, activity, or web3 opportunities</p>
+      </div>
     </GuideInfoBox>
   );
   
