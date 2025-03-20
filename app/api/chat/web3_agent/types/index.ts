@@ -8,7 +8,7 @@ export interface TokenBalance {
 
 export interface PortfolioData {
   balances: TokenBalance[];
-  total_value_usd: number;
+  count: number;
 }
 
 interface Balance {
@@ -23,6 +23,48 @@ interface Balance {
 export interface AccountsAPIBalances {
   count: number;
   balances: Balance[];
+  unprocessedNetworks: number[];
+}
+
+export interface AccountsAPITransaction {
+  hash: string;
+  timestamp: string;
+  chainId: number;
+  accountId: string;
+  blockNumber: number;
+  blockHash: string;
+  gas: number;
+  gasUsed: number;
+  gasPrice: string;
+  effectiveGasPrice: string;
+  nonce: number;
+  cumulativeGasUsed: number;
+  methodId: string;
+  value: string;
+  to: string;
+  from: string;
+  isError: boolean;
+  valueTransfers: {
+    from: string;
+    to: string;
+    amount?: string;
+    decimal?: number;
+    tokenId?: string;
+    contractAddress: string;
+    symbol?: string;
+    name?: string;
+    transferType: "erc20" | "erc721" | "erc1155" | string;
+  }[];
+  logs: any[]; // Adjust based on log structure if needed
+  toAddressName?: string;
+  transactionProtocol?: string;
+  transactionCategory?: string;
+  transactionType?: string;
+  readable?: string;
+}
+export interface AccountsAPITransactions {
+  pageInfo: any;
+  data: AccountsAPITransaction[];
   unprocessedNetworks: number[];
 }
 

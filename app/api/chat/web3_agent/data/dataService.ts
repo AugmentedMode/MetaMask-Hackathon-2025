@@ -9,6 +9,7 @@ import {
   ApiResponse,
   AccountsAPIBalances,
   PricesAPIMarketData,
+  AccountsAPITransactions,
 } from "../types";
 import { AGENT_CONFIG, USE_MOCK_DATA } from "../config";
 import * as mockData from "./mockData";
@@ -60,9 +61,9 @@ export const getPortfolioBalances = async (
   address: string,
   chainName = "Ethereum",
 ): Promise<AccountsAPIBalances | undefined> => {
-  // if (USE_MOCK_DATA) {
-  //   return mockData.mockPortfolioData;
-  // }
+  if (USE_MOCK_DATA) {
+    return mockData.mockPortfolioData;
+  }
   if (!address) {
     console.error("Address is required to fetch portfolio balances");
     return;
@@ -85,7 +86,8 @@ export const getPortfolioBalances = async (
         return data.data!;
       } catch (error) {
         console.error("Error fetching portfolio balances:", error);
-        return;
+
+        return mockData.mockPortfolioData;
       }
     },
   );
@@ -96,9 +98,9 @@ export const getTokenPrice = async (
   token: string,
   chain?: string,
 ): Promise<PricesAPIMarketData | undefined> => {
-  // if (USE_MOCK_DATA) {
-  //   return mockData.mockTokenPrices[token] || { price: 0, change_24h: 0 };
-  // }
+  if (USE_MOCK_DATA) {
+    return mockData.mockTokenPrices;
+  }
   const chainId = deriveChainId(chain || "Ethereum");
   return getCachedData(
     `price:${token}:${chain || "default"}`,
@@ -118,8 +120,7 @@ export const getTokenPrice = async (
       } catch (error) {
         console.error("Error fetching token price:", error);
         // Fallback to mock data if real API fails
-        // return mockData.mockTokenPrices[token] || { price: 0, change_24h: 0 };
-        return;
+        return mockData.mockTokenPrices;
       }
     },
   );
@@ -162,10 +163,13 @@ export const getTransactionHistory = async (
   address?: string,
   chain: string = "Ethereum",
   limit: number = 50,
-): Promise<Transaction[]> => {
-  // if (USE_MOCK_DATA) {
-  //   return (mockData.mockTransactions[chain] || []).slice(0, limit);
-  // }
+): Promise<AccountsAPITransactions> => {
+  if (USE_MOCK_DATA) {
+    return {
+      ...mockData.mockTransactions,
+      data: (mockData.mockTransactions.data || []).slice(0, limit),
+    };
+  }
   const chainId = deriveChainId(chain);
   return getCachedData(
     `transactions:${address || "default"}:${chain}:${limit}`,
@@ -175,7 +179,8 @@ export const getTransactionHistory = async (
         const response = await fetch(
           `${AGENT_CONFIG.endpoints.transactions}/${address}/transactions?includeTxMetadata=true&networks=${chainId}&limit=${limit}`,
         );
-        const data: ApiResponse<Transaction[]> = await response.json();
+        const data: ApiResponse<AccountsAPITransactions> =
+          await response.json();
 
         if (!data.success) {
           throw new Error(data.error || "Failed to fetch transaction history");
@@ -185,7 +190,10 @@ export const getTransactionHistory = async (
       } catch (error) {
         console.error("Error fetching transaction history:", error);
         // Fallback to mock data if real API fails
-        return (mockData.mockTransactions[chain] || []).slice(0, limit);
+        return {
+          ...mockData.mockTransactions,
+          data: (mockData.mockTransactions.data || []).slice(0, limit),
+        };
       }
     },
   );
