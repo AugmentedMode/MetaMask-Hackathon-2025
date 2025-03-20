@@ -91,23 +91,23 @@ export const mockGasAnalysis: GasAnalysis = {
   total_gas_spent_usd: 85,
   transaction_count: 12,
   average_gas_per_tx_usd: 7.08,
-  highest_gas_tx: { hash: "0x4567...", gas_fee_usd: 20, timestamp: "2024-03-05T16:45:00Z", type: "swap" },
+  highest_gas_tx: { hash: "0x4567...", gas_fee_usd: 20, timestamp: "2024-03-05T16:45:00Z", type: "swap", chain: "Ethereum" },
   gas_by_type: {
     swap: { count: 5, total_usd: 45, average_usd: 9 },
     transfer: { count: 3, total_usd: 20, average_usd: 6.67 },
     approve: { count: 4, total_usd: 20, average_usd: 5 },
   },
-  optimization_tips: [
-    "Consider using L2 solutions like Arbitrum or Optimism for smaller transactions to reduce gas fees by up to 90%",
-    "Batch multiple transfers together when possible to save on gas costs",
-    "For token approvals, use specific amounts instead of unlimited approvals for better security",
-    "Try to execute transactions during off-peak hours when gas prices are lower",
-  ],
-  current_gas_prices: {
-    slow: { gwei: 20, estimated_time: "10 minutes", usd_for_transfer: 3 },
-    average: { gwei: 30, estimated_time: "3 minutes", usd_for_transfer: 4.5 },
-    fast: { gwei: 45, estimated_time: "1 minute", usd_for_transfer: 6.75 },
-  },
+  // optimization_tips: [
+  //   "Consider using L2 solutions like Arbitrum or Optimism for smaller transactions to reduce gas fees by up to 90%",
+  //   "Batch multiple transfers together when possible to save on gas costs",
+  //   "For token approvals, use specific amounts instead of unlimited approvals for better security",
+  //   "Try to execute transactions during off-peak hours when gas prices are lower",
+  // ],
+  // current_gas_prices: {
+  //   slow: { gwei: 20, estimated_time: "10 minutes", usd_for_transfer: 3 },
+  //   average: { gwei: 30, estimated_time: "3 minutes", usd_for_transfer: 4.5 },
+  //   fast: { gwei: 45, estimated_time: "1 minute", usd_for_transfer: 6.75 },
+  // },
 };
 
 // Portfolio analysis mock data

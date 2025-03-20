@@ -10,7 +10,7 @@ import {
 } from '../types';
 import { AGENT_CONFIG, USE_MOCK_DATA } from '../config';
 import * as mockData from './mockData';
-import { analyzeGasFees } from '../utils/dataUtils';
+import { analyzeGasFees, formatTransactionData } from '../utils/dataUtils';
 
 // Simple cache implementation
 const cache = new Map<string, { data: any; timestamp: number }>();
@@ -162,15 +162,6 @@ export const getGasAnalysis = async (
   if (USE_MOCK_DATA) {
     return mockData.mockGasAnalysis;
   }
-
-  const PERIOD_TO_SECONDS: Record<string, number> = {
-    day: 86_400,
-    week: 604_800,
-    month: 2_592_000,
-    quarter: 7_776_000
-  };
-
-  const periodInSeconds = PERIOD_TO_SECONDS[period] ?? -1;
   
   return getCachedData(
     `gas:${address}:${chain}:${period}`,
@@ -179,7 +170,7 @@ export const getGasAnalysis = async (
       try {
         const response = await fetch(
           //`${AGENT_CONFIG.endpoints.transactions}/gas?address=${address}&chain=${chain}&period=${period}`
-          `${AGENT_CONFIG.endpoints.transactions}?${address ? `address=${address}&` : ''}chain=${chain}&period=${periodInSeconds}`
+          `${AGENT_CONFIG.endpoints.transactions}?${address ? `address=${address}&` : ''}chain=${chain}}`
         );
         const transactionsData: ApiResponse<Transaction[]> = await response.json();
         
@@ -187,8 +178,10 @@ export const getGasAnalysis = async (
           throw new Error(transactionsData.error || 'Failed to fetch transactions list for gas analysis');
         }
 
-        // need to see what comes from the transactions API before passing transactions list
-        return analyzeGasFees(transactionsData.data as Transaction[]);
+        // need to double check the format of transactionsData, after Michael adds the API call
+        const formattedTransactionsList = formatTransactionData(transactionsData.data!, period);
+        
+        return analyzeGasFees(formattedTransactionsList);
         
       } catch (error) {
         console.error('Error fetching gas analysis:', error);

@@ -1,4 +1,43 @@
-import { GasAnalysis, GasByType, Transaction } from "../types";
+import { ApiResponse, GasAnalysis, GasByType, Transaction } from "../types";
+
+const PERIOD_TO_SECONDS: Record<string, number> = {
+    day: 86_400,
+    week: 604_800,
+    month: 2_592_000,
+    quarter: 7_776_000
+  };
+
+  
+export const formatTransactionData = (transactionsData: any[], period: string) : Transaction[] => {
+    const now = Math.floor(Date.now() / 1000);
+    const periodInSeconds = PERIOD_TO_SECONDS[period] ?? -1;
+
+    // this should go through all transactionsData list, and for each transaction 
+    // make sure the object aligns with the Transaction interface
+    return transactionsData
+    .map((tx) => ({
+      hash: tx.hash,
+      type: tx.transactionType.toLowerCase(),
+      timestamp: tx.timestamp,
+      gas_fee_usd: tx.effectiveGasPrice * tx.gasPrice,
+      chain: `chain_${tx.chainId}`,
+      value_usd: tx.value ? parseFloat(tx.value) * 1e-18 : undefined,
+      token: tx.transactionCategory === "TRANSFER" ? tx.readable : undefined,
+      from_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[0]?.symbol : undefined,
+      to_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[1]?.symbol : undefined,
+      amount: tx.valueTransfers?.[0]?.amount ?? undefined,
+      to_address: tx.to,
+      from_address: tx.from,
+      spender: tx.transactionCategory === "APPROVE" ? tx.to : undefined,
+    }))
+    // filter only transactions not older than periodInSeconds
+    .filter((tx) => {
+      const txTimestamp = Math.floor(new Date(tx.timestamp).getTime() / 1000);
+      return now - txTimestamp <= periodInSeconds;
+    });
+};
+
+
 
 export const analyzeGasFees = (transactionsList : Transaction[]) : GasAnalysis=> {
     if (transactionsList.length === 0)
