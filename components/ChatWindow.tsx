@@ -396,6 +396,7 @@ export function ChatWindow(props: {
             onSubmit={handleFormSubmit}
             loading={chat.isLoading || intermediateStepsLoading}
             placeholder={props.placeholder ?? "What's it like to be a pirate?"}
+            className="mb-4"
           >
             {props.showIngestForm && (
               <Dialog>

@@ -45,26 +45,39 @@ export default function RootLayout({
           <WalletProvider>
             <Web3Providers>
               <div className="bg-secondary grid grid-rows-[auto,1fr] h-[100dvh]">
-                <div className="grid grid-cols-[1fr,auto,auto] gap-2 p-4">
+                <div className="grid grid-cols-[1fr,auto,auto,auto] gap-2 p-4">
                   <div className="flex gap-4 flex-col md:flex-row md:items-center">
-                    <Image src="/images/MetaMask-icon-Fox.svg" alt="Logo" width={40} height={40} />
+                    <Image src="/images/MetaMask-logo-black.svg" alt="Logo" width={97} height={48} />
+                  </div>
+
+                  <div className="flex justify-center items-center">
+                    <Button asChild variant="link" size="default">
+                      <a
+                        href="https://github.com/langchain-ai/langchain-nextjs-template"
+                        target="_blank"
+
+                      >
+                        <span className="text-base font-semibold">Learn More</span>
+                      </a>
+                    </Button>
+                  </div>
+
+                  <div className="flex justify-center items-center">
+                    <Button asChild variant="link" size="default">
+                      <a
+                        href="https://github.com/langchain-ai/langchain-nextjs-template"
+                        target="_blank"
+
+                      >
+                        <span className="text-base font-semibold">Github</span>
+                      </a>
+                    </Button>
                   </div>
 
                   <div className="flex justify-center items-center">
                     <ConnectWallet />
                   </div>
 
-                  <div className="flex justify-center">
-                    <Button asChild variant="outline" size="default">
-                      <a
-                        href="https://github.com/langchain-ai/langchain-nextjs-template"
-                        target="_blank"
-                      >
-                        <GithubIcon className="size-3" />
-                        <span>Open in GitHub</span>
-                      </a>
-                    </Button>
-                  </div>
                 </div>
                 <div className="bg-background mx-4 relative grid rounded-t-2xl border border-input border-b-0">
                   <div className="absolute inset-0">{children}</div>
