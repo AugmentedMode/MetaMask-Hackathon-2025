@@ -2,17 +2,17 @@
 
 import { type Message } from "ai";
 import { useChat } from "ai/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { toast } from "sonner";
-import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
+import { useWallet } from './WalletContext';
 
 import { ChatMessageBubble } from "@/components/ChatMessageBubble";
-import { IntermediateStep } from "./IntermediateStep";
-import { Button } from "./ui/button";
+import { IntermediateStep } from "@/components/IntermediateStep";
+import { Button } from "@/components/ui/button";
 import { ArrowDown, LoaderCircle, Paperclip } from "lucide-react";
-import { Checkbox } from "./ui/checkbox";
-import { UploadDocumentsForm } from "./UploadDocumentsForm";
+import { Checkbox } from "@/components/ui/checkbox";
+import { UploadDocumentsForm } from "@/components/UploadDocumentsForm";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import { cn } from "@/utils/cn";
 
 function ChatMessages(props: {
@@ -30,23 +30,40 @@ function ChatMessages(props: {
   aiEmoji?: string;
   className?: string;
 }) {
-  return (
-    <div className="flex flex-col max-w-[768px] mx-auto pb-12 w-full">
-      {props.messages.map((m, i) => {
-        if (m.role === "system") {
-          return <IntermediateStep key={m.id} message={m} />;
-        }
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-        const sourceKey = (props.messages.length - 1 - i).toString();
-        return (
-          <ChatMessageBubble
-            key={m.id}
-            message={m}
-            aiEmoji={props.aiEmoji}
-            sources={props.sourcesForMessages[sourceKey]}
-          />
-        );
-      })}
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [props.messages]);
+
+  if (props.messages.length === 0 && props.emptyStateComponent) {
+    return (
+      <div className="grid min-h-screen place-items-center">
+        {props.emptyStateComponent}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`overflow-auto` + (props.className ? ` ${props.className}` : "")}>
+      <div className="flex flex-col max-w-[768px] mx-auto pb-12 w-full pt-8">
+        {props.messages
+          .filter((m) => m.role !== "system")
+          .map((message) => {
+            const sources = props.sourcesForMessages[message.id];
+            return (
+              <ChatMessageBubble
+                key={message.id}
+                message={message}
+                aiEmoji={message.role === "assistant" ? props.aiEmoji : undefined}
+                sources={sources}
+              />
+            );
+          })}
+        <div ref={messagesEndRef} />
+      </div>
     </div>
   );
 }
@@ -63,8 +80,20 @@ export function ChatInput(props: {
   actions?: ReactNode;
 }) {
   const disabled = props.loading && props.onStop == null;
+  const formRef = useRef<HTMLFormElement>(null);
+  
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Submit on Enter, but allow Shift+Enter for newlines
+    if (e.key === 'Enter' && !e.shiftKey && !disabled) {
+      e.preventDefault();
+      // Programmatically submit the form
+      formRef.current?.requestSubmit();
+    }
+  };
+  
   return (
     <form
+      ref={formRef}
       onSubmit={(e) => {
         e.stopPropagation();
         e.preventDefault();
@@ -82,7 +111,9 @@ export function ChatInput(props: {
           value={props.value}
           placeholder={props.placeholder}
           onChange={props.onChange}
+          onKeyDown={handleKeyDown}
           className="border-none outline-none bg-transparent p-4"
+          disabled={disabled}
         />
 
         <div className="flex justify-between ml-4 mr-2 mb-2">
@@ -90,14 +121,14 @@ export function ChatInput(props: {
 
           <div className="flex gap-2 self-end">
             {props.actions}
-            <Button type="submit" className="self-end" disabled={disabled} variant={"secondary"}>
+            <Button type="submit" className="self-end" disabled={disabled}>
               {props.loading ? (
                 <span role="status" className="flex justify-center">
                   <LoaderCircle className="animate-spin" />
                   <span className="sr-only">Loading...</span>
                 </span>
               ) : (
-                <span>Send</span>
+                <span className="font-bold">Send</span>
               )}
             </Button>
           </div>
@@ -107,17 +138,17 @@ export function ChatInput(props: {
   );
 }
 
-function ScrollToBottom(props: { className?: string }) {
-  const { isAtBottom, scrollToBottom } = useStickToBottomContext();
-
-  if (isAtBottom) return null;
+function ScrollToBottom(props: { 
+  onClick: () => void;
+  className?: string; 
+}) {
   return (
     <Button
+      onClick={props.onClick}
       variant="outline"
-      className={props.className}
-      onClick={() => scrollToBottom()}
+      size="default"
+      className={`relative` + (props.className ? ` ${props.className}` : "")}
     >
-      <ArrowDown className="w-4 h-4" />
       <span>Scroll to bottom</span>
     </Button>
   );
@@ -129,39 +160,55 @@ function StickyToBottomContent(props: {
   className?: string;
   contentClassName?: string;
 }) {
-  const context = useStickToBottomContext();
-
-  // scrollRef will also switch between overflow: unset to overflow: auto
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  const scrollToBottom = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  };
+  
   return (
     <div
-      ref={context.scrollRef}
-      style={{ width: "100%", height: "100%" }}
-      className={cn("grid grid-rows-[1fr,auto]", props.className)}
+      className={
+        `min-h-screen bg-muted/40 flex flex-col relative` +
+        (props.className ? ` ${props.className}` : "")
+      }
     >
-      <div ref={context.contentRef} className={props.contentClassName}>
+      <div
+        ref={contentRef}
+        className={
+          `h-full overflow-auto` +
+          (props.contentClassName ? ` ${props.contentClassName}` : "")
+        }
+      >
         {props.content}
       </div>
-
-      {props.footer}
+      <div className="sticky bottom-0 z-10 bg-background border-t">
+        {props.footer}
+      </div>
     </div>
   );
 }
 
 export function ChatLayout(props: { content: ReactNode; footer: ReactNode }) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  const scrollToBottom = () => {
+    if (contentRef.current) {
+      contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  };
+  
   return (
-    <StickToBottom>
-      <StickyToBottomContent
-        className="absolute inset-0"
-        contentClassName="py-8 px-2"
-        content={props.content}
-        footer={
-          <div className="sticky bottom-8 px-2">
-            <ScrollToBottom className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4" />
-            {props.footer}
-          </div>
-        }
-      />
-    </StickToBottom>
+    <div className="flex flex-col h-full">
+      <div className="flex-1 overflow-auto" ref={contentRef}>
+        {props.content}
+      </div>
+      <div className="sticky bottom-0 z-10 bg-background">
+        {props.footer}
+      </div>
+    </div>
   );
 }
 
@@ -177,33 +224,40 @@ export function ChatWindow(props: {
   onInputChange?: (value: string) => void;
 }) {
   const [showIntermediateSteps, setShowIntermediateSteps] = useState(
-    false,
+    props.showIntermediateStepsToggle ? false : true,
   );
   const [intermediateStepsLoading, setIntermediateStepsLoading] =
     useState(false);
-
   const [sourcesForMessages, setSourcesForMessages] = useState<
     Record<string, any>
   >({});
+
+  const { walletAddress, isConnected } = useWallet();
 
   const chat = useChat({
     api: props.endpoint,
     body: {
       show_intermediate_steps: showIntermediateSteps,
+      walletAddress: isConnected ? walletAddress : null,
     },
     initialInput: props.inputValue,
     onResponse(response) {
-      const sourcesHeader = response.headers.get("x-sources");
-      const sources = sourcesHeader
-        ? JSON.parse(Buffer.from(sourcesHeader, "base64").toString("utf8"))
-        : [];
+      try {
+        const sourcesHeader = response.headers.get("x-sources");
+        const sources = sourcesHeader
+          ? JSON.parse(Buffer.from(sourcesHeader, "base64").toString("utf8"))
+          : [];
 
-      const messageIndexHeader = response.headers.get("x-message-index");
-      if (sources.length && messageIndexHeader !== null) {
-        setSourcesForMessages({
-          ...sourcesForMessages,
-          [messageIndexHeader]: sources,
-        });
+        const messageIndexHeader = response.headers.get("x-message-index");
+        if (sources.length && messageIndexHeader !== null) {
+          setSourcesForMessages({
+            ...sourcesForMessages,
+            [messageIndexHeader]: sources,
+          });
+        }
+      } catch (error) {
+        // Handle parsing error or other issues
+        console.error("Error processing response:", error);
       }
     },
     streamMode: "text",
@@ -213,8 +267,12 @@ export function ChatWindow(props: {
       }),
   });
 
+  // Sync input state with parent (if provided)
   useEffect(() => {
-    if (props.inputValue !== undefined && chat.input !== props.inputValue) {
+    if (
+      props.inputValue !== undefined &&
+      props.inputValue !== chat.input
+    ) {
       chat.setInput(props.inputValue);
     }
   }, [props.inputValue, chat]);
@@ -241,6 +299,7 @@ export function ChatWindow(props: {
       } as unknown as FormEvent<HTMLFormElement>;
       
       await chat.handleSubmit(fakeEvent);
+      props.onInputChange?.(""); // Clear input after submit
       return;
     }
 
@@ -261,6 +320,7 @@ export function ChatWindow(props: {
       body: JSON.stringify({
         messages: messagesWithUserReply,
         show_intermediate_steps: true,
+        walletAddress: isConnected ? walletAddress : null,
       }),
     });
     const json = await response.json();
@@ -322,6 +382,7 @@ export function ChatWindow(props: {
   async function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     await submitMessage();
+    props.onInputChange?.("");
   }
 
   return (
@@ -349,6 +410,7 @@ export function ChatWindow(props: {
             onSubmit={handleFormSubmit}
             loading={chat.isLoading || intermediateStepsLoading}
             placeholder={props.placeholder ?? "What's it like to be a pirate?"}
+            className="mb-4"
           >
             {props.showIngestForm && (
               <Dialog>

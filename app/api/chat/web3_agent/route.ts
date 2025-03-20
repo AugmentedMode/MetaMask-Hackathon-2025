@@ -23,9 +23,11 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const returnIntermediateSteps = body.show_intermediate_steps;
+    const walletAddress = body.walletAddress;
     
     if (DEBUG_MODE) {
       console.log(`Processing request with intermediate steps: ${returnIntermediateSteps}`);
+      console.log(`User wallet address: ${walletAddress || 'Not connected'}`);
     }
     
     // Filter out system messages for display purposes
@@ -36,8 +38,8 @@ export async function POST(req: NextRequest) {
       )
       .map(convertVercelMessageToLangChainMessage);
 
-    // Create a ReAct agent for Web3 interactions
-    const agent = createWeb3Agent();
+    // Create a ReAct agent for Web3 interactions with wallet address
+    const agent = createWeb3Agent(walletAddress);
 
     if (!returnIntermediateSteps) {
       // Stream back all generated tokens
