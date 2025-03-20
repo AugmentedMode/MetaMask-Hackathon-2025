@@ -11,10 +11,53 @@ export interface PortfolioData {
   total_value_usd: number;
 }
 
+interface Balance {
+  object: string;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: string;
+  chainId: number;
+}
+export interface AccountsAPIBalances {
+  count: number;
+  balances: Balance[];
+  unprocessedNetworks: number[];
+}
+
 export interface TokenPrice {
   price: number;
   change_24h: number;
 }
+
+export type MarketData<T = number> = {
+  id: string;
+  price: T;
+  marketCap: T;
+  allTimeHigh?: T;
+  allTimeLow?: T;
+  totalVolume?: T;
+  high1d?: T;
+  low1d?: T;
+  circulatingSupply?: T;
+  dilutedMarketCap?: T;
+  marketCapPercentChange1d?: T;
+  priceChange1d: T;
+  pricePercentChange1h: T | null;
+  pricePercentChange1d: T | null;
+  pricePercentChange7d: T | null;
+  pricePercentChange14d: T | null;
+  pricePercentChange30d: T | null;
+  pricePercentChange200d: T | null;
+  pricePercentChange1y: T | null;
+  bondingCurveProgressPercent?: T | null;
+  liquidity?: T | null;
+  totalSupply?: T | null;
+  holderCount?: T | null;
+  isMutable?: boolean | null;
+};
+export type PricesAPIMarketData = Record<string, MarketData>;
 
 // DeFi-related types
 export interface YieldOpportunity {
