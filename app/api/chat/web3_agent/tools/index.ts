@@ -11,6 +11,9 @@ export const getPortfolioBalancesTool = new DynamicStructuredTool({
     address: z.string().optional().describe("Ethereum address to check (optional)"),
   }),
   func: async ({ address }) => {
+    if (!address) {
+      return JSON.stringify({ error: "Address is required" });
+    }
     const data = await dataService.getPortfolioBalances(address);
     return JSON.stringify(data);
   },
