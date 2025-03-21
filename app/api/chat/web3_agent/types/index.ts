@@ -8,13 +8,98 @@ export interface TokenBalance {
 
 export interface PortfolioData {
   balances: TokenBalance[];
-  total_value_usd: number;
+  count: number;
+}
+
+interface Balance {
+  object: string;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  balance: string;
+  chainId: number;
+}
+export interface AccountsAPIBalances {
+  count: number;
+  balances: Balance[];
+  unprocessedNetworks: number[];
+}
+
+export interface AccountsAPITransaction {
+  hash: string;
+  timestamp: string;
+  chainId: number;
+  accountId: string;
+  blockNumber: number;
+  blockHash: string;
+  gas: number;
+  gasUsed: number;
+  gasPrice: string;
+  effectiveGasPrice: string;
+  nonce: number;
+  cumulativeGasUsed: number;
+  methodId: string;
+  value: string;
+  to: string;
+  from: string;
+  isError: boolean;
+  valueTransfers: {
+    from: string;
+    to: string;
+    amount?: string;
+    decimal?: number;
+    tokenId?: string;
+    contractAddress: string;
+    symbol?: string;
+    name?: string;
+    transferType: "erc20" | "erc721" | "erc1155" | string;
+  }[];
+  logs: any[]; // Adjust based on log structure if needed
+  toAddressName?: string;
+  transactionProtocol?: string;
+  transactionCategory?: string;
+  transactionType?: string;
+  readable?: string;
+}
+export interface AccountsAPITransactions {
+  pageInfo: any;
+  data: AccountsAPITransaction[];
+  unprocessedNetworks: number[];
 }
 
 export interface TokenPrice {
   price: number;
   change_24h: number;
 }
+
+export type MarketData<T = number> = {
+  id: string;
+  price: T;
+  marketCap: T;
+  allTimeHigh?: T;
+  allTimeLow?: T;
+  totalVolume?: T;
+  high1d?: T;
+  low1d?: T;
+  circulatingSupply?: T;
+  dilutedMarketCap?: T;
+  marketCapPercentChange1d?: T;
+  priceChange1d: T;
+  pricePercentChange1h: T | null;
+  pricePercentChange1d: T | null;
+  pricePercentChange7d: T | null;
+  pricePercentChange14d: T | null;
+  pricePercentChange30d: T | null;
+  pricePercentChange200d: T | null;
+  pricePercentChange1y: T | null;
+  bondingCurveProgressPercent?: T | null;
+  liquidity?: T | null;
+  totalSupply?: T | null;
+  holderCount?: T | null;
+  isMutable?: boolean | null;
+};
+export type PricesAPIMarketData = Record<string, MarketData>;
 
 // DeFi-related types
 export interface YieldOpportunity {
