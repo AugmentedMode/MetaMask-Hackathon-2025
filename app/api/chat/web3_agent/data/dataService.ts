@@ -78,7 +78,7 @@ export const getPortfolioBalances = async (
           `${AGENT_CONFIG.endpoints.balances}/${address}/balances?networks=${chainId}`,
         );
         const data: AccountsAPIBalances = await response.json();
-  
+
         if (!response.ok) {
           throw new Error(await response.text() || "Failed to fetch portfolio balances");
         }
