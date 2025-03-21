@@ -11,8 +11,10 @@ import {
   PricesAPIMarketData,
   AccountsAPITransactions,
 } from "../types";
-import { AGENT_CONFIG, USE_MOCK_DATA } from "../config";
-import * as mockData from "./mockData";
+import { AGENT_CONFIG, USE_MOCK_DATA } from '../config';
+import * as mockData from './mockData';
+import { analyzeGasFees, formatTransactionData, fetchAllTransactions } from '../utils/dataUtils';
+
 
 // Simple cache implementation
 const cache = new Map<string, { data: any; timestamp: number }>();
@@ -68,6 +70,8 @@ export const getPortfolioBalances = async (
     console.error("Address is required to fetch portfolio balances");
     return;
   }
+  console.log('Using getPortfolioBalances tool.');
+
   const chainId = deriveChainId(chainName);
   return getCachedData(
     `balances:${address || "default"}`,
@@ -99,6 +103,9 @@ export const getTokenPrice = async (
   if (USE_MOCK_DATA) {
     return mockData.mockTokenPrices;
   }
+
+  console.log('Using getTokenPrice tool.');
+
   const chainId = deriveChainId(chain || "Ethereum");
   return getCachedData(
     `price:${token}:${chain || "default"}`,
@@ -130,6 +137,7 @@ export const getDefiYields = async (
   if (USE_MOCK_DATA) {
     return mockData.mockDefiYields[token] || [];
   }
+  console.log('Using getDefiYields tool.');
 
   return getCachedData(
     `yields:${token}`,
@@ -168,6 +176,8 @@ export const getTransactionHistory = async (
     };
   }
   const chainId = deriveChainId(chain);
+  console.log('Using getTransactionHistory tool.');
+
   return getCachedData(
     `transactions:${address || "default"}:${chain}:${limit}`,
     AGENT_CONFIG.cacheTTL.transactions,
@@ -176,6 +186,7 @@ export const getTransactionHistory = async (
         const response = await fetch(
           `${AGENT_CONFIG.endpoints.transactions}/${address}/transactions?includeTxMetadata=true&networks=${chainId}&limit=${limit}`,
         );
+
         if (!response.ok || response.status !== 200) {
           throw new Error("Failed to fetch tx history");
         }
@@ -196,29 +207,26 @@ export const getTransactionHistory = async (
 
 // Fetch gas usage analysis
 export const getGasAnalysis = async (
-  address?: string,
+  address: string,
   chain: string = 'Ethereum',
   period: string = 'month'
 ): Promise<GasAnalysis> => {
   if (USE_MOCK_DATA) {
     return mockData.mockGasAnalysis;
   }
+
+  console.log('Using getGasAnalysis tool.');
+  const chainId = deriveChainId(chain);
   
   return getCachedData(
-    `gas:${address || 'default'}:${chain}:${period}`,
+    `gas:${address}:${chain}:${period}`,
     AGENT_CONFIG.cacheTTL.transactions,
     async () => {
       try {
-        const response = await fetch(
-          `${AGENT_CONFIG.endpoints.transactions}/gas?${address ? `address=${address}&` : ''}chain=${chain}&period=${period}`
-        );
-        const data: ApiResponse<GasAnalysis> = await response.json();
+        const allTransactions = await fetchAllTransactions(address, chainId)
+        const formattedTransactionsList = await formatTransactionData(address, allTransactions, period);
         
-        if (!data.success) {
-          throw new Error(data.error || 'Failed to fetch gas analysis');
-        }
-        
-        return data.data!;
+        return analyzeGasFees(formattedTransactionsList);
       } catch (error) {
         console.error('Error fetching gas analysis:', error);
         // Fallback to mock data if real API fails
@@ -236,7 +244,8 @@ export const getPortfolioAnalysis = async (
   if (USE_MOCK_DATA) {
     return mockData.mockPortfolioAnalysis;
   }
-  
+
+  console.log('Using getPortfolioAnalysis tool.');
   return getCachedData(
     `portfolio:${address || 'default'}:${period}`,
     AGENT_CONFIG.cacheTTL.balances,
@@ -359,6 +368,8 @@ export const resolveIdentity = async (identifier: string): Promise<IdentityInfo 
     return mockData.mockIdentities.find(id => id.identifier === identifier) || null;
   }
   
+  console.log('Using resolveIdentity tool.');
+
   return getCachedData(
     `identity:${identifier}`,
     AGENT_CONFIG.cacheTTL.identities,
@@ -387,6 +398,7 @@ export const getProtocolsByTVLChange = async (): Promise<typeof mockData.mockTVL
     return mockData.mockTVLData;
   }
   
+  console.log('Using getProtocolsByTVLChange tool.');
   return getCachedData(
     'tvl:protocols',
     AGENT_CONFIG.cacheTTL.defi,
