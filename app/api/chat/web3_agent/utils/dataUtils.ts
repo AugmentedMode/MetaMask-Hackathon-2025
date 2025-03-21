@@ -17,9 +17,7 @@ const PERIOD_TO_SECONDS: Record<string, number> = {
     if (response.status !== 200)
         throw new Error("Failed to fetch ETH price");
 
-    const price = data['0x0000000000000000000000000000000000000000']["usd"];
-    console.log(price);
-    
+    const price = data['0x0000000000000000000000000000000000000000']["usd"];    
     return price;
   }
 
@@ -40,8 +38,6 @@ const PERIOD_TO_SECONDS: Record<string, number> = {
       const response = await fetch(url.toString());
       const result: ApiResponse<Transaction[]> = await response.json();
   
-      //console.log(result.pageInfo);
-
       if (response.status !== 200) {
         throw new Error(response.statusText + ' - Failed to fetch transactions list');
       }
@@ -75,8 +71,8 @@ export const formatTransactionData =  async (address: string, transactionsData: 
       type: tx.transactionType.toLowerCase(),
       timestamp: tx.timestamp,
       gas_fee_usd: tx.effectiveGasPrice * tx.gasUsed * ethPrice * 1e-18,
-      chain: `chain_${tx.chainId}`,
-      value_usd: tx.value ? parseFloat(tx.value) * 1e-18 : undefined,
+      chain: tx.chainId,
+      value_usd: tx.value ? parseFloat(tx.value) * 1e-18 * ethPrice : undefined,
       token: tx.transactionCategory === "TRANSFER" ? tx.readable : undefined,
       from_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[0]?.symbol : undefined,
       to_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[1]?.symbol : undefined,

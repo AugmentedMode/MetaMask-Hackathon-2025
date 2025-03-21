@@ -63,8 +63,8 @@ export const getTransactionHistoryTool = new DynamicStructuredTool({
 
 // Gas usage analysis tool
 export const analyzeGasUsageTool = new DynamicStructuredTool({
-  name: "compute_gas_fees_used",
-  description: "Compute gas fees that the user has used to perform their transactions, in a given period of time and offer advice on optimizing gas fee costs in the future.",
+  name: "analyze_gas_usage",
+  description: "Compute gas fees that the user has used to perform their transactions in a given period of time. Do not user the get_transaction_history tool for this, compute_gas_fees_used is self-sufficient. Display a detailed report, including the top gas fee transaction details.",
   schema: z.object({
     address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Public address").describe("Public address, starting with 0x"),
     period: z.string().describe("Time period to analyze (e.g., 'day', 'week', 'month', 'year')"),

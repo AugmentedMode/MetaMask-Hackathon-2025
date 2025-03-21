@@ -70,6 +70,8 @@ export const getPortfolioBalances = async (
     console.error("Address is required to fetch portfolio balances");
     return;
   }
+  console.log('Using getPortfolioBalances tool.');
+
   const chainId = deriveChainId(chainName);
   return getCachedData(
     `balances:${address || "default"}`,
@@ -103,6 +105,9 @@ export const getTokenPrice = async (
   if (USE_MOCK_DATA) {
     return mockData.mockTokenPrices;
   }
+
+  console.log('Using getTokenPrice tool.');
+
   const chainId = deriveChainId(chain || "Ethereum");
   return getCachedData(
     `price:${token}:${chain || "default"}`,
@@ -135,6 +140,7 @@ export const getDefiYields = async (
   if (USE_MOCK_DATA) {
     return mockData.mockDefiYields[token] || [];
   }
+  console.log('Using getDefiYields tool.');
 
   return getCachedData(
     `yields:${token}`,
@@ -173,6 +179,8 @@ export const getTransactionHistory = async (
     };
   }
   const chainId = deriveChainId(chain);
+  console.log('Using getTransactionHistory tool.');
+
   return getCachedData(
     `transactions:${address || "default"}:${chain}:${limit}`,
     AGENT_CONFIG.cacheTTL.transactions,
@@ -184,8 +192,9 @@ export const getTransactionHistory = async (
         const data: ApiResponse<AccountsAPITransactions> =
           await response.json();
 
-        if (!data.success) {
-          throw new Error(data.error || "Failed to fetch transaction history");
+        if (response.status !== 200) {
+          console.log(response.statusText);
+          throw new Error('Failed to fetch transaction history');
         }
 
         return data.data!;
@@ -211,6 +220,7 @@ export const getGasAnalysis = async (
     return mockData.mockGasAnalysis;
   }
 
+  console.log('Using getGasAnalysis tool.');
   const chainId = deriveChainId(chain);
   
   return getCachedData(
@@ -239,7 +249,8 @@ export const getPortfolioAnalysis = async (
   if (USE_MOCK_DATA) {
     return mockData.mockPortfolioAnalysis;
   }
-  
+
+  console.log('Using getPortfolioAnalysis tool.');
   return getCachedData(
     `portfolio:${address || 'default'}:${period}`,
     AGENT_CONFIG.cacheTTL.balances,
@@ -362,6 +373,8 @@ export const resolveIdentity = async (identifier: string): Promise<IdentityInfo 
     return mockData.mockIdentities.find(id => id.identifier === identifier) || null;
   }
   
+  console.log('Using resolveIdentity tool.');
+
   return getCachedData(
     `identity:${identifier}`,
     AGENT_CONFIG.cacheTTL.identities,
@@ -390,6 +403,7 @@ export const getProtocolsByTVLChange = async (): Promise<typeof mockData.mockTVL
     return mockData.mockTVLData;
   }
   
+  console.log('Using getProtocolsByTVLChange tool.');
   return getCachedData(
     'tvl:protocols',
     AGENT_CONFIG.cacheTTL.defi,
