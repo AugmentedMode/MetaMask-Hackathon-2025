@@ -101,6 +101,12 @@ export type MarketData<T = number> = {
 };
 export type PricesAPIMarketData = Record<string, MarketData>;
 
+export type SpotPriceResponse = {
+  [tokenAddress: string]: {
+    usd: number;
+  };
+}
+
 // DeFi-related types
 export interface YieldOpportunity {
   protocol: string;
@@ -210,6 +216,7 @@ export interface IdentityInfo {
 
 // API response type for tools
 export interface ApiResponse<T> {
+  pageInfo?: any;
   success: boolean;
   data?: T;
   error?: string;

@@ -13,7 +13,7 @@ import {
 } from "../types";
 import { AGENT_CONFIG, USE_MOCK_DATA } from '../config';
 import * as mockData from './mockData';
-import { analyzeGasFees, formatTransactionData } from '../utils/dataUtils';
+import { analyzeGasFees, formatTransactionData, fetchAllTransactions } from '../utils/dataUtils';
 
 
 // Simple cache implementation
@@ -210,27 +210,18 @@ export const getGasAnalysis = async (
   if (USE_MOCK_DATA) {
     return mockData.mockGasAnalysis;
   }
+
+  const chainId = deriveChainId(chain);
   
   return getCachedData(
     `gas:${address}:${chain}:${period}`,
     AGENT_CONFIG.cacheTTL.transactions,
     async () => {
       try {
-        const response = await fetch(
-          //`${AGENT_CONFIG.endpoints.transactions}/gas?address=${address}&chain=${chain}&period=${period}`
-          `${AGENT_CONFIG.endpoints.transactions}?${address ? `address=${address}&` : ''}chain=${chain}}`
-        );
-        const transactionsData: ApiResponse<Transaction[]> = await response.json();
-        
-        if (!transactionsData.success) {
-          throw new Error(transactionsData.error || 'Failed to fetch transactions list for gas analysis');
-        }
-
-        // need to double check the format of transactionsData, after Michael adds the API call
-        const formattedTransactionsList = formatTransactionData(transactionsData.data!, period);
+        const allTransactions = await fetchAllTransactions(address, chainId)
+        const formattedTransactionsList = await formatTransactionData(address, allTransactions, period);
         
         return analyzeGasFees(formattedTransactionsList);
-        
       } catch (error) {
         console.error('Error fetching gas analysis:', error);
         // Fallback to mock data if real API fails
