@@ -26,7 +26,7 @@ When you're unsure, be honest about your limitations and avoid making up informa
     transactions:
       process.env.TRANSACTIONS_API || "https://api.example.com/transactions",
     prices: process.env.PRICES_API || "https://api.example.com/prices",
-    defi: process.env.DEFI_API || "https://api.example.com/defi",
+    defi: process.env.POOLS_API || "https://api.example.com/defi",
     identities:
       process.env.IDENTITIES_API || "https://api.example.com/identities",
   },

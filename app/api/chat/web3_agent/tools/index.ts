@@ -3,6 +3,11 @@ import { Calculator } from "@langchain/community/tools/calculator";
 import { z } from "zod";
 import * as dataService from "../data/dataService";
 
+const logToolUsage = (toolName: string, params: any) => {
+  console.log(`\n[TOOL EXECUTION] ${toolName}`);
+  console.log('Parameters:', JSON.stringify(params, null, 2));
+};
+
 // Get portfolio balances tool
 export const getPortfolioBalancesTool = new DynamicStructuredTool({
   name: "get_portfolio_balances",
@@ -11,6 +16,7 @@ export const getPortfolioBalancesTool = new DynamicStructuredTool({
     address: z.string().optional().describe("Ethereum address to check (optional)"),
   }),
   func: async ({ address }) => {
+    logToolUsage("get_portfolio_balances", { address });
     if (!address) {
       return JSON.stringify({ error: "Address is required" });
     }
@@ -28,6 +34,7 @@ export const getTokenPriceTool = new DynamicStructuredTool({
     chain: z.string().optional().describe("Blockchain name (optional)"),
   }),
   func: async ({ token, chain }) => {
+    logToolUsage("get_token_price", { token, chain });
     const data = await dataService.getTokenPrice(token, chain);
     return JSON.stringify(data);
   },
@@ -36,11 +43,12 @@ export const getTokenPriceTool = new DynamicStructuredTool({
 // Get DeFi yields tool
 export const getDefiYieldsTool = new DynamicStructuredTool({
   name: "get_defi_yields",
-  description: "Get the best yield farming and staking opportunities for a token",
+  description: "Get the best yield/APY farming and staking opportunities for a token",
   schema: z.object({
     token: z.string().describe("Token symbol to find yield for"),
   }),
   func: async ({ token }) => {
+    logToolUsage("get_defi_yields", { token });
     const data = await dataService.getDefiYields(token);
     return JSON.stringify(data);
   },

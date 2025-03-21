@@ -139,9 +139,9 @@ export const getDefiYields = async (
     AGENT_CONFIG.cacheTTL.defi,
     async () => {
       try {
-        const response = await fetch(
-          `${AGENT_CONFIG.endpoints.defi}/yields?token=${token}`,
-        );
+        const baseUrl = `${AGENT_CONFIG.endpoints.defi}/token/${token}`;
+        const url = `${baseUrl}?min_tvl=50000000`;
+        const response = await fetch(url);
         const data: ApiResponse<YieldOpportunity[]> = await response.json();
 
         if (!data.success) {

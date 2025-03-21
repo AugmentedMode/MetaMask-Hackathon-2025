@@ -101,12 +101,23 @@ export type MarketData<T = number> = {
 };
 export type PricesAPIMarketData = Record<string, MarketData>;
 
-// DeFi-related types
-export interface YieldOpportunity {
-  protocol: string;
+// Type definition for a single pool
+export type YieldOpportunity = {
+  pool_id: string;
+  chain: string;
+  project: string;
+  symbol: string;
+  tvl_usd: number;
   apy: number;
-  type: string; // e.g., "staking", "lending", "farming"
-}
+  apy_base: number;
+  apy_reward: number | null;
+  stablecoin: boolean;
+  il_risk: 'no' | 'low' | 'high'; // Enum for IL risk levels
+  exposure: 'single' | 'multi'; // Enum for exposure types
+};
+
+// Type for the array of pools
+export type YieldOpportunityResponse = YieldOpportunity[];
 
 // Transaction-related types
 export interface Transaction {
