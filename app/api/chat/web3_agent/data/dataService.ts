@@ -186,8 +186,6 @@ export const getTransactionHistory = async (
         const response = await fetch(
           `${AGENT_CONFIG.endpoints.transactions}/${address}/transactions?includeTxMetadata=true&networks=${chainId}&limit=${limit}`,
         );
-        const data: ApiResponse<AccountsAPITransactions> =
-          await response.json();
 
         if (!response.ok || response.status !== 200) {
           throw new Error("Failed to fetch tx history");
