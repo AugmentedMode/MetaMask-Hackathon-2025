@@ -8,13 +8,17 @@ export const getPortfolioBalancesTool = new DynamicStructuredTool({
   name: "get_portfolio_balances",
   description: "Get the user's current token balances and portfolio value",
   schema: z.object({
-    address: z.string().optional().describe("Ethereum address to check (optional)"),
+    address: z
+      .string()
+      .optional()
+      .describe("Ethereum address to check (optional)"),
   }),
   func: async ({ address }) => {
     if (!address) {
       return JSON.stringify({ error: "Address is required" });
     }
     const data = await dataService.getPortfolioBalances(address);
+
     return JSON.stringify(data);
   },
 });
@@ -36,7 +40,8 @@ export const getTokenPriceTool = new DynamicStructuredTool({
 // Get DeFi yields tool
 export const getDefiYieldsTool = new DynamicStructuredTool({
   name: "get_defi_yields",
-  description: "Get the best yield farming and staking opportunities for a token",
+  description:
+    "Get the best yield farming and staking opportunities for a token",
   schema: z.object({
     token: z.string().describe("Token symbol to find yield for"),
   }),
@@ -51,9 +56,18 @@ export const getTransactionHistoryTool = new DynamicStructuredTool({
   name: "get_transaction_history",
   description: "Get the user's transaction history on a specific chain",
   schema: z.object({
-    address: z.string().optional().describe("Ethereum address to check (optional)"),
-    chain: z.string().optional().describe("Blockchain name (e.g., Ethereum, Polygon, default: Ethereum)"),
-    limit: z.number().optional().describe("Number of transactions to return (default: 5)"),
+    address: z
+      .string()
+      .optional()
+      .describe("Ethereum address to check (optional)"),
+    chain: z
+      .string()
+      .optional()
+      .describe("Blockchain name (e.g., Ethereum, Polygon, default: Ethereum)"),
+    limit: z
+      .number()
+      .optional()
+      .describe("Number of transactions to return (default: 5)"),
   }),
   func: async ({ address, chain = "Ethereum", limit = 5 }) => {
     const data = await dataService.getTransactionHistory(address, chain, limit);

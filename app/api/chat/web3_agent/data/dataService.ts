@@ -77,13 +77,11 @@ export const getPortfolioBalances = async (
         const response = await fetch(
           `${AGENT_CONFIG.endpoints.balances}/${address}/balances?networks=${chainId}`,
         );
-        const data: ApiResponse<AccountsAPIBalances> = await response.json();
-
-        if (!data.success) {
-          throw new Error(data.error || "Failed to fetch portfolio balances");
+        if (!response.ok || response.status !== 200) {
+          throw new Error("Failed to fetch asset balances");
         }
-
-        return data.data!;
+        const data: AccountsAPIBalances = await response.json();
+        return data;
       } catch (error) {
         console.error("Error fetching portfolio balances:", error);
 
@@ -110,13 +108,12 @@ export const getTokenPrice = async (
         const response = await fetch(
           `${AGENT_CONFIG.endpoints.prices}/${chainId}/spot-prices?includeMarketData=true&tokenAddresses=${token}`,
         );
-        const data: ApiResponse<PricesAPIMarketData> = await response.json();
-
-        if (!data.success) {
-          throw new Error(data.error || "Failed to fetch token price");
+        if (!response.ok || response.status !== 200) {
+          throw new Error("Failed to fetch token price");
         }
+        const data: PricesAPIMarketData = await response.json();
 
-        return data.data!;
+        return data;
       } catch (error) {
         console.error("Error fetching token price:", error);
         // Fallback to mock data if real API fails
@@ -179,14 +176,12 @@ export const getTransactionHistory = async (
         const response = await fetch(
           `${AGENT_CONFIG.endpoints.transactions}/${address}/transactions?includeTxMetadata=true&networks=${chainId}&limit=${limit}`,
         );
-        const data: ApiResponse<AccountsAPITransactions> =
-          await response.json();
-
-        if (!data.success) {
-          throw new Error(data.error || "Failed to fetch transaction history");
+        if (!response.ok || response.status !== 200) {
+          throw new Error("Failed to fetch tx history");
         }
+        const data: AccountsAPITransactions = await response.json();
 
-        return data.data!;
+        return data;
       } catch (error) {
         console.error("Error fetching transaction history:", error);
         // Fallback to mock data if real API fails
