@@ -130,6 +130,7 @@ export interface Transaction {
   to_address?: string;
   from_address?: string;
   spender?: string;
+  readable?: string;
 }
 
 // Gas analysis types

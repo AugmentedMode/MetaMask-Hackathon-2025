@@ -26,8 +26,9 @@ const PERIOD_TO_SECONDS: Record<string, number> = {
     const allTransactions: Transaction[] = [];
     let cursor: string | null = null;
     let hasNextPage = true;
+    let pageCount = 0;
   
-    while (hasNextPage) {
+    while (hasNextPage && pageCount < 10) {
       const url = new URL(`${AGENT_CONFIG.endpoints.transactions}/${address}/transactions`);
       url.searchParams.append('includeTxMetadata', 'true');
       url.searchParams.append('networks', chainId.toString());
@@ -48,6 +49,7 @@ const PERIOD_TO_SECONDS: Record<string, number> = {
   
       cursor = result.pageInfo?.cursor ?? result.pageInfo?.endcursor ?? null;
       hasNextPage = !!(result.pageInfo?.hasNextPage && cursor)
+      pageCount++;
     }
   
     return allTransactions;
@@ -58,6 +60,7 @@ const PERIOD_TO_SECONDS: Record<string, number> = {
  // TODO: 
  // find a way to dynamically compute timeframe so it can work with whatever period the user enters
  // check that the tx type is taken into consideration and show it in the analysis
+ // should include readable in output
 export const formatTransactionData =  async (address: string, transactionsData: any[], period: string) : Promise<Transaction[]> => {
     const now = Math.floor(Date.now() / 1000);
     const periodInSeconds = PERIOD_TO_SECONDS[period] ?? -1;
@@ -73,13 +76,14 @@ export const formatTransactionData =  async (address: string, transactionsData: 
       gas_fee_usd: tx.effectiveGasPrice * tx.gasUsed * ethPrice * 1e-18,
       chain: tx.chainId,
       value_usd: tx.value ? parseFloat(tx.value) * 1e-18 * ethPrice : undefined,
-      token: tx.transactionCategory === "TRANSFER" ? tx.readable : undefined,
-      from_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[0]?.symbol : undefined,
-      to_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[1]?.symbol : undefined,
+      // token: tx.transactionCategory === "TRANSFER" ? tx.readable : undefined,
+      // from_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[0]?.symbol : undefined,
+      // to_token: tx.transactionCategory === "SWAP" ? tx.valueTransfers?.[1]?.symbol : undefined,
       amount: tx.valueTransfers?.[0]?.amount ?? undefined,
       to_address: tx.to as string,
       from_address: tx.from as string,
       spender: tx.transactionCategory === "APPROVE" ? tx.to : undefined,
+      readable: tx.readable,
     }))
     // filter only transactions not older than periodInSeconds and sent FROM the user
     .filter((tx) => {
