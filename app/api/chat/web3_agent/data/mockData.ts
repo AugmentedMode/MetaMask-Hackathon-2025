@@ -99,19 +99,8 @@ export const mockTokenPrices: PricesAPIMarketData = {
 
 // DeFi yields mock data
 export const mockDefiYields: Record<string, YieldOpportunity[]> = {
-  ETH: [
-    { protocol: "Lido", apy: 3.5, type: "staking" },
-    { protocol: "Rocket Pool", apy: 3.2, type: "staking" },
-    { protocol: "Aave", apy: 0.8, type: "lending" },
-  ],
-  MATIC: [
-    { protocol: "Polygon Staking", apy: 5.1, type: "staking" },
-    { protocol: "Aave", apy: 1.2, type: "lending" },
-  ],
-  FIL: [
-    { protocol: "Filecoin Staking", apy: 7.8, type: "staking" },
-    { protocol: "Venus", apy: 2.3, type: "lending" },
-  ],
+  DAI: [{"pool_id":"e26ce7d9-db75-4aa4-b1db-cc21ae17bdfb","chain":"Ethereum","project":"spark","symbol":"DAI","tvl_usd":119295815.0,"apy":5.80017,"apy_base":5.80017,"apy_reward":null,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"3665ee7e-6c5d-49d9-abb7-c47ab5d9d4ac","chain":"Ethereum","project":"aave-v3","symbol":"DAI","tvl_usd":48289061.0,"apy":3.32872,"apy_base":3.32872,"apy_reward":null,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"7be3388a-0591-4281-a6f3-eff3217693fa","chain":"Ethereum","project":"yearn-finance","symbol":"DAI","tvl_usd":15430894.0,"apy":4.97685,"apy_base":4.97685,"apy_reward":0.0,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"3fdf7baa-8ca7-4ad5-bf0c-f934878c0c96","chain":"Solana","project":"save","symbol":"DAI","tvl_usd":7984370.0,"apy":0.0,"apy_base":0.0,"apy_reward":0.0,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"cc110152-36c2-4e10-9c12-c5b4eb662143","chain":"Ethereum","project":"compound-v2","symbol":"DAI","tvl_usd":6736687.0,"apy":3.01784,"apy_base":3.01784,"apy_reward":0.0,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"cb222642-8a6f-4a91-850c-dd718f294146","chain":"Ethereum","project":"across","symbol":"DAI","tvl_usd":6042430.0,"apy":7.28971,"apy_base":5.47436,"apy_reward":1.81535,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"405d8dad-5c99-4c91-90d3-82813ade1ff1","chain":"Ethereum","project":"aave-v2","symbol":"DAI","tvl_usd":5572990.0,"apy":2.06754,"apy_base":2.06754,"apy_reward":null,"stablecoin":true,"il_risk":"no","exposure":"single"}],
+  USDT: [{"pool_id":"f981a304-bb6c-45b8-b0c5-fd2f515ad23a","chain":"Ethereum","project":"aave-v3","symbol":"USDT","tvl_usd":1415098233.0,"apy":2.65462,"apy_base":2.65462,"apy_reward":null,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"4e8cc592-c8d5-4824-8155-128ba521e903","chain":"Ethereum","project":"fluid-lending","symbol":"USDT","tvl_usd":227517924.0,"apy":4.96,"apy_base":3.62,"apy_reward":1.34,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"9f3a6015-5045-4471-ba65-ad3dc7c38269","chain":"BSC","project":"venus-core-pool","symbol":"USDT","tvl_usd":172739947.0,"apy":4.72774,"apy_base":4.72774,"apy_reward":0.0,"stablecoin":true,"il_risk":"no","exposure":"single"},{"pool_id":"f4d5b566-e815-4ca2-bb07-7bcd8bc797f1","chain":"Ethereum","project":"compound-v3","symbol":"USDT","tvl_usd":77508636.0,"apy":3.80103,"apy_base":3.23031,"apy_reward":0.57072,"stablecoin":true,"il_risk":"no","exposure":"single"}],
 };
 
 // Transaction history mock data
@@ -403,10 +392,7 @@ export const mockPortfolioAnalysis: PortfolioAnalysis = {
 
 // Identity resolution mock data
 export const mockIdentities: IdentityInfo[] = [
-  { type: 'ENS', identifier: 'vitalik.eth', address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045' },
-  { type: 'ENS', identifier: 'uniswap.eth', address: '0x1a9C8182C09F50C8318d769245beA52c32BE35BC' },
-  { type: 'Lens', identifier: 'lens/stani', address: '0x7E0b0363404751346930AF9bA7a5Aad8a2dE06d3' },
-  { type: 'Farcaster', identifier: 'fc/dwr.eth', address: '0x6b0bda3f2ffed5efc83fa8c024acad2d31870ac9' },
+  { name:"vitalik.eth",ethereum_address:"0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"}
 ];
 
 // TVL Data mock
