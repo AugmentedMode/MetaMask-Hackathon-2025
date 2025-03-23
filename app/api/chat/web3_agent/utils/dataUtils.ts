@@ -57,7 +57,6 @@ import { ApiResponse, GasAnalysis, GasByType, PricesAPIMarketData, SpotPriceResp
 export const formatTransactionData =  async (address: string, transactionsData: any[], period: number) : Promise<Transaction[]> => {
     const now = Math.floor(Date.now() / 1000);
     const ethPrice = await fetchETHPrice();
-    console.log(period);
 
     // this should go through all transactionsData list, and for each transaction it will
     // make sure the object aligns with the Transaction interface
