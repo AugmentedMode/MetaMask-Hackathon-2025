@@ -209,7 +209,7 @@ export const getTransactionHistory = async (
 export const getGasAnalysis = async (
   address: string,
   chain: string = 'Ethereum',
-  period: string = 'month'
+  period: number = 2592000
 ): Promise<GasAnalysis> => {
   if (USE_MOCK_DATA) {
     return mockData.mockGasAnalysis;
