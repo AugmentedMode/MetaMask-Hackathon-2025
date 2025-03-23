@@ -15,7 +15,6 @@ import { AGENT_CONFIG, USE_MOCK_DATA } from '../config';
 import * as mockData from './mockData';
 import { analyzeGasFees, formatTransactionData, fetchAllTransactions } from '../utils/dataUtils';
 
-
 // Simple cache implementation
 const cache = new Map<string, { data: any; timestamp: number }>();
 
@@ -136,28 +135,35 @@ export const getTokenPrice = async (
 export const getDefiYields = async (
   token: string,
 ): Promise<YieldOpportunity[]> => {
+  console.log('🔧 getDefiYields called with token:', token);
+  
   if (USE_MOCK_DATA) {
+    console.log('📝 Using mock data for getDefiYields');
     return mockData.mockDefiYields[token] || [];
   }
-  console.log('Using getDefiYields tool.');
 
   return getCachedData(
     `yields:${token}`,
     AGENT_CONFIG.cacheTTL.defi,
     async () => {
       try {
-        const response = await fetch(
-          `${AGENT_CONFIG.endpoints.defi}/yields?token=${token}`,
-        );
+        const baseUrl = `${AGENT_CONFIG.endpoints.defi}/token/${token}`;
+        const url = `${baseUrl}?min_tvl=50000000`;
+        console.log('🌐 Fetching yields from URL:', url);
+        
+        const response = await fetch(url);
         const data: ApiResponse<YieldOpportunity[]> = await response.json();
 
-        if (!data.success) {
+        if (!response.ok || response.status !== 200) {
+          console.error('❌ Failed to fetch DeFi yields:', data.error);
           throw new Error(data.error || "Failed to fetch DeFi yields");
         }
 
-        return data.data!;
+        console.log('✅ Successfully fetched DeFi yields');
+        // Return data.data instead of data to ensure we return YieldOpportunity[]
+        return data.data || [];
       } catch (error) {
-        console.error("Error fetching DeFi yields:", error);
+        console.error('❌ Error fetching DeFi yields:', error);
         // Fallback to mock data if real API fails
         return mockData.mockDefiYields[token] || [];
       }
@@ -367,7 +373,10 @@ export const searchHistoricalTransactions = async (
 // Resolve identity (ENS, Lens, etc.)
 export const resolveIdentity = async (identifier: string): Promise<IdentityInfo | null> => {
   if (USE_MOCK_DATA) {
-    return mockData.mockIdentities.find(id => id.identifier === identifier) || null;
+    // Since identifier doesn't exist on IdentityInfo, we need to match by name or ethereum_address
+    return mockData.mockIdentities.find(id => 
+      id.name === identifier || id.ethereum_address === identifier
+    ) || null;
   }
   
   console.log('Using resolveIdentity tool.');
@@ -377,18 +386,21 @@ export const resolveIdentity = async (identifier: string): Promise<IdentityInfo 
     AGENT_CONFIG.cacheTTL.identities,
     async () => {
       try {
-        const response = await fetch(`${AGENT_CONFIG.endpoints.identities}?identifier=${identifier}`);
+        const response = await fetch(`${AGENT_CONFIG.endpoints.identities}/${identifier}`);
         const data: ApiResponse<IdentityInfo> = await response.json();
         
-        if (!data.success) {
+        if (!response.ok || response.status !== 200) {
           throw new Error(data.error || 'Failed to resolve identity');
         }
         
-        return data.data!;
+        // Extract data.data to return IdentityInfo type
+        return data.data || null;
       } catch (error) {
         console.error('Error resolving identity:', error);
         // Fallback to mock data if real API fails
-        return mockData.mockIdentities.find(id => id.identifier === identifier) || null;
+        return mockData.mockIdentities.find(id => 
+          id.name === identifier || id.ethereum_address === identifier
+        ) || null;
       }
     }
   );

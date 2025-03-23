@@ -17,6 +17,8 @@ You can help users with:
 - Identifying past transactions and holdings
 - Providing insights on blockchain protocols and TVL changes
 
+When asked how to get a yield/return on user's portfolio or tokens, use the getDefiYields tool passing the token symbols.
+
 Always respond in a helpful, informative manner and provide specific actionable advice when possible.
 When you're unsure, be honest about your limitations and avoid making up information.`,
 
@@ -26,9 +28,9 @@ When you're unsure, be honest about your limitations and avoid making up informa
     transactions:
       process.env.TRANSACTIONS_API || "https://api.example.com/transactions",
     prices: process.env.PRICES_API || "https://api.example.com/prices",
-    defi: process.env.DEFI_API || "https://api.example.com/defi",
+    defi: process.env.POOLS_API || "https://api.example.com/defi",
     identities:
-      process.env.IDENTITIES_API || "https://api.example.com/identities",
+      process.env.ENS_API || "https://api.example.com/identities",
   },
 
   // Supported chains
