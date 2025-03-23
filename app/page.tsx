@@ -4,6 +4,8 @@ import { ChatWindow } from "@/components/ChatWindow";
 import { GuideInfoBox } from "@/components/guide/GuideInfoBox";
 import { SuggestionButtons } from "@/components/SuggestionButtons";
 import { useState, useCallback } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function Web3AgentPage() {
   const [input, setInput] = useState("");
@@ -15,7 +17,7 @@ export default function Web3AgentPage() {
     "What's the gas price right now?",
     "Show me the price of ETH in the last 24 hours",
     "Explain how liquidity pools work",
-    "How do I bridge assets to Layer 2?",
+    "How do I bridge ETH to Linea?",
   ];
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -26,7 +28,7 @@ export default function Web3AgentPage() {
     <GuideInfoBox>
       <div className="flex flex-col items-center text-center py-4 text-primary">
         <h1 className="text-4xl font-bold mb-4">What can I help with onchain?</h1>
-        <p className="text-xl">Ask anything about your assets, activity, or web3 opportunities</p>
+        <p className="text-xl mb-6">Ask anything about your assets, activity, or web3 opportunities</p>
       </div>
     </GuideInfoBox>
   );

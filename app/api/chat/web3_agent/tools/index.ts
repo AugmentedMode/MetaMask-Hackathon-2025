@@ -3,6 +3,7 @@ import { Calculator } from "@langchain/community/tools/calculator";
 import { z } from "zod";
 import * as dataService from "../data/dataService";
 import { createTokenSwapTool } from "./tokenSwap";
+import { createEthBridgeTool } from "./bridgeTool";
 
 // Get portfolio balances tool
 export const getPortfolioBalancesTool = new DynamicStructuredTool({
@@ -151,4 +152,5 @@ export const tools = [
   resolveIdentityTool,
   analyzeProtocolTVLTool,
   createTokenSwapTool,
+  createEthBridgeTool,
 ]; 

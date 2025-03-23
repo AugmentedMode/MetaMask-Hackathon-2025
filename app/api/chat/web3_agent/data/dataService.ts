@@ -484,3 +484,186 @@ export const getSwapLink = async (options: SwapLinkOptions): Promise<SwapLinkRes
     };
   }
 };
+
+// Options for bridge link
+export interface BridgeLinkOptions {
+  amount?: string;
+  address?: string;
+  l2Chain: string;
+}
+
+// Result for bridge link
+export interface BridgeLinkResult {
+  url: string;
+  estimatedGas: string;
+  estimatedTime: string;
+}
+
+// Get link for bridging ETH to L2s
+export const getBridgeLink = async (options: BridgeLinkOptions): Promise<BridgeLinkResult> => {
+  const { amount, address, l2Chain } = options;
+  
+  // Normalize chain name to lowercase for comparison
+  const chain = l2Chain.toLowerCase();
+  
+  // Define bridge URLs for various L2s
+  const bridgeUrls: Record<string, string> = {
+    'linea': 'https://bridge.linea.build',
+    'arbitrum': 'https://bridge.arbitrum.io',
+    'optimism': 'https://app.optimism.io/bridge',
+    'base': 'https://bridge.base.org',
+    'zksync': 'https://portal.zksync.io/bridge',
+    'polygon': 'https://wallet.polygon.technology/bridge',
+  };
+  
+  // Get base URL for the specified chain (default to Linea if not found)
+  const baseUrl = bridgeUrls[chain] || bridgeUrls['linea'];
+  
+  // Estimated times and gas costs vary by L2
+  const estimatedGas: Record<string, string> = {
+    'linea': '0.002 ETH',
+    'arbitrum': '0.003 ETH',
+    'optimism': '0.0015 ETH',
+    'base': '0.0018 ETH',
+    'zksync': '0.0022 ETH',
+    'polygon': '0.0025 ETH',
+  };
+  
+  const estimatedTimes: Record<string, string> = {
+    'linea': '10-15 minutes',
+    'arbitrum': '10-20 minutes',
+    'optimism': '5-10 minutes',
+    'base': '5-10 minutes',
+    'zksync': '15-25 minutes',
+    'polygon': '7-12 minutes',
+  };
+  
+  // Check if using mock data
+  if (USE_MOCK_DATA) {
+    // Mock data for testing
+    return {
+      url: `${baseUrl}?sourceToken=ETH&amount=${amount || '0.1'}&walletAddress=${address || '0x'}`,
+      estimatedGas: estimatedGas[chain] || "0.002 ETH",
+      estimatedTime: estimatedTimes[chain] || "10-15 minutes"
+    };
+  }
+  
+  try {
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    
+    if (amount) queryParams.append('amount', amount);
+    if (address) queryParams.append('walletAddress', address);
+    
+    // Get estimated gas and time for the specified chain
+    const gasEstimate = estimatedGas[chain] || "0.002 ETH";
+    const timeEstimate = estimatedTimes[chain] || "10-15 minutes";
+    
+    const url = queryParams.toString() ? `${baseUrl}?${queryParams.toString()}` : baseUrl;
+    
+    return {
+      url,
+      estimatedGas: gasEstimate,
+      estimatedTime: timeEstimate
+    };
+  } catch (error) {
+    console.error(`Error generating ${l2Chain} bridge link:`, error);
+    // Fallback to a basic URL
+    return {
+      url: baseUrl,
+      estimatedGas: "Unknown",
+      estimatedTime: "Unknown"
+    };
+  }
+};
+
+// Keep the old function for backward compatibility
+export const getLineaBridgeLink = async (options: Omit<BridgeLinkOptions, 'l2Chain'>): Promise<BridgeLinkResult> => {
+  return getBridgeLink({ ...options, l2Chain: 'linea' });
+};
+
+// Options for bridge and swap link
+export interface BridgeAndSwapLinkOptions extends BridgeLinkOptions {
+  targetToken: string;
+}
+
+// Get link for bridging ETH to an L2 and swapping to another token
+export const getBridgeAndSwapLink = async (options: BridgeAndSwapLinkOptions): Promise<BridgeLinkResult> => {
+  const { amount, address, l2Chain, targetToken } = options;
+  
+  // Normalize chain name to lowercase for comparison
+  const chain = l2Chain.toLowerCase();
+  
+  // Define bridge+swap URLs for various L2s
+  // In a real implementation, these would point to specialized bridge+swap services or include additional parameters
+  const bridgeAndSwapUrls: Record<string, string> = {
+    'arbitrum': 'https://bridge.arbitrum.io/?swapTo=',
+    'optimism': 'https://app.optimism.io/bridge/deposit?swapTo=',
+    'base': 'https://bridge.base.org/?swapTo=',
+    'linea': 'https://bridge.linea.build/?swapTo=',
+    'zksync': 'https://portal.zksync.io/bridge?swapTo=',
+    'polygon': 'https://wallet.polygon.technology/bridge/?swapTo=',
+  };
+  
+  // Get base URL for the specified chain (default to Arbitrum if not found)
+  const baseUrl = bridgeAndSwapUrls[chain] || bridgeAndSwapUrls['arbitrum'];
+  
+  // Estimated gas costs are higher for bridge+swap
+  const estimatedGas: Record<string, string> = {
+    'arbitrum': '0.0045 ETH',
+    'optimism': '0.0025 ETH',
+    'base': '0.0028 ETH',
+    'linea': '0.003 ETH',
+    'zksync': '0.0032 ETH',
+    'polygon': '0.0035 ETH',
+  };
+  
+  // Estimated times are longer for bridge+swap
+  const estimatedTimes: Record<string, string> = {
+    'arbitrum': '15-25 minutes',
+    'optimism': '8-15 minutes',
+    'base': '8-15 minutes',
+    'linea': '15-20 minutes',
+    'zksync': '20-30 minutes',
+    'polygon': '10-15 minutes',
+  };
+  
+  // Check if using mock data
+  if (USE_MOCK_DATA) {
+    // Mock data for testing
+    return {
+      url: `${baseUrl}${targetToken}${amount ? `&amount=${amount}` : ''}${address ? `&walletAddress=${address}` : ''}`,
+      estimatedGas: estimatedGas[chain] || "0.004 ETH",
+      estimatedTime: estimatedTimes[chain] || "15-25 minutes"
+    };
+  }
+  
+  try {
+    // Build query parameters
+    const queryParams = new URLSearchParams();
+    
+    queryParams.append('swapTo', targetToken);
+    if (amount) queryParams.append('amount', amount);
+    if (address) queryParams.append('walletAddress', address);
+    
+    // Get estimated gas and time for the specified chain
+    const gasEstimate = estimatedGas[chain] || "0.004 ETH";
+    const timeEstimate = estimatedTimes[chain] || "15-25 minutes";
+    
+    const url = `${baseUrl}${targetToken}${queryParams.toString() ? `&${queryParams.toString()}` : ''}`;
+    
+    return {
+      url,
+      estimatedGas: gasEstimate,
+      estimatedTime: timeEstimate
+    };
+  } catch (error) {
+    console.error(`Error generating ${l2Chain} bridge and swap link:`, error);
+    // Fallback to a basic URL
+    return {
+      url: `${baseUrl}${targetToken}`,
+      estimatedGas: "Unknown",
+      estimatedTime: "Unknown"
+    };
+  }
+};
