@@ -81,7 +81,7 @@ export const analyzeGasUsageTool = new DynamicStructuredTool({
   description: "Compute gas fees that the user has used to perform their transactions in a given period of time. Do not user the get_transaction_history tool for this, compute_gas_fees_used is self-sufficient. Display a detailed report, including the top gas fee transaction details.",
   schema: z.object({
     address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Public address").describe("Public address, starting with 0x"),
-    period: z.string().describe("Time period to analyze (e.g., 'day', 'week', 'month', 'year')"),
+    period: z.number().describe("Time period to analyze, in seconds. Example: 86400 if the user specifies a period of 1 day."),
     chain: z.string().optional().describe("Network name (optional, default: Ethereum)"),
   }),
   func: async ({ address, chain = "Ethereum", period }) => {

@@ -1,12 +1,6 @@
 import { AGENT_CONFIG } from "../config";
 import { ApiResponse, GasAnalysis, GasByType, PricesAPIMarketData, SpotPriceResponse, Transaction } from "../types";
 
-const PERIOD_TO_SECONDS: Record<string, number> = {
-    day: 86_400,
-    week: 604_800,
-    month: 2_592_000,
-    quarter: 7_776_000
-  };
 
   async function fetchETHPrice() {
     const response = await fetch(
@@ -58,13 +52,12 @@ const PERIOD_TO_SECONDS: Record<string, number> = {
 
 
  // TODO: 
- // find a way to dynamically compute timeframe so it can work with whatever period the user enters
  // check that the tx type is taken into consideration and show it in the analysis
  // should include readable in output
-export const formatTransactionData =  async (address: string, transactionsData: any[], period: string) : Promise<Transaction[]> => {
+export const formatTransactionData =  async (address: string, transactionsData: any[], period: number) : Promise<Transaction[]> => {
     const now = Math.floor(Date.now() / 1000);
-    const periodInSeconds = PERIOD_TO_SECONDS[period] ?? -1;
     const ethPrice = await fetchETHPrice();
+    console.log(period);
 
     // this should go through all transactionsData list, and for each transaction it will
     // make sure the object aligns with the Transaction interface
@@ -85,10 +78,10 @@ export const formatTransactionData =  async (address: string, transactionsData: 
       spender: tx.transactionCategory === "APPROVE" ? tx.to : undefined,
       readable: tx.readable,
     }))
-    // filter only transactions not older than periodInSeconds and sent FROM the user
+    // filter only transactions not older than PERIOD and sent FROM the user
     .filter((tx) => {
       const txTimestamp = Math.floor(new Date(tx.timestamp).getTime() / 1000);
-      return (now - txTimestamp <= periodInSeconds) && (tx.from_address.toLowerCase() === address.toLowerCase());
+      return (now - txTimestamp <= period) && (tx.from_address.toLowerCase() === address.toLowerCase());
     });
 };
 
