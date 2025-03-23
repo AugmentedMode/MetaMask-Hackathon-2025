@@ -5,7 +5,7 @@ export const AGENT_CONFIG = {
     model: process.env.WEB3_AGENT_MODEL || "gpt-4o-mini", // Default model, can be overridden with env var
     temperature: 0.2,
   },
-  
+
   // System prompt for the Web3 agent
   systemPrompt: `You are a helpful Web3 Assistant specializing in blockchain, cryptocurrencies, and DeFi. 
   You have access to tools that can check token balances, prices, yields, transaction history, and more.
@@ -46,12 +46,14 @@ export const AGENT_CONFIG = {
   // API endpoints for data sources (to be replaced with actual endpoints)
   endpoints: {
     balances: process.env.BALANCES_API || "https://api.example.com/balances",
-    transactions: process.env.TRANSACTIONS_API || "https://api.example.com/transactions",
+    transactions:
+      process.env.TRANSACTIONS_API || "https://api.example.com/transactions",
     prices: process.env.PRICES_API || "https://api.example.com/prices",
     defi: process.env.DEFI_API || "https://api.example.com/defi",
-    identities: process.env.IDENTITIES_API || "https://api.example.com/identities",
+    identities:
+      process.env.IDENTITIES_API || "https://api.example.com/identities",
   },
-  
+
   // Supported chains
   supportedChains: [
     "Ethereum",
@@ -59,11 +61,10 @@ export const AGENT_CONFIG = {
     "Arbitrum",
     "Optimism",
     "Base",
-    "Filecoin",
+    "Linea",
     "BNB Chain",
-    "Avalanche",
   ],
-  
+
   // Cache TTL settings (in seconds)
   cacheTTL: {
     balances: 60, // 1 minute

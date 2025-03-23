@@ -10,10 +10,17 @@ export const getPortfolioBalancesTool = new DynamicStructuredTool({
   name: "get_portfolio_balances",
   description: "Get the user's current token balances and portfolio value",
   schema: z.object({
-    address: z.string().optional().describe("Ethereum address to check (optional)"),
+    address: z
+      .string()
+      .optional()
+      .describe("Ethereum address to check (optional)"),
   }),
   func: async ({ address }) => {
+    if (!address) {
+      return JSON.stringify({ error: "Address is required" });
+    }
     const data = await dataService.getPortfolioBalances(address);
+
     return JSON.stringify(data);
   },
 });
@@ -35,7 +42,8 @@ export const getTokenPriceTool = new DynamicStructuredTool({
 // Get DeFi yields tool
 export const getDefiYieldsTool = new DynamicStructuredTool({
   name: "get_defi_yields",
-  description: "Get the best yield farming and staking opportunities for a token",
+  description:
+    "Get the best yield farming and staking opportunities for a token",
   schema: z.object({
     token: z.string().describe("Token symbol to find yield for"),
   }),
@@ -50,9 +58,18 @@ export const getTransactionHistoryTool = new DynamicStructuredTool({
   name: "get_transaction_history",
   description: "Get the user's transaction history on a specific chain",
   schema: z.object({
-    address: z.string().optional().describe("Ethereum address to check (optional)"),
-    chain: z.string().optional().describe("Blockchain name (e.g., Ethereum, Polygon, default: Ethereum)"),
-    limit: z.number().optional().describe("Number of transactions to return (default: 5)"),
+    address: z
+      .string()
+      .optional()
+      .describe("Ethereum address to check (optional)"),
+    chain: z
+      .string()
+      .optional()
+      .describe("Blockchain name (e.g., Ethereum, Polygon, default: Ethereum)"),
+    limit: z
+      .number()
+      .optional()
+      .describe("Number of transactions to return (default: 5)"),
   }),
   func: async ({ address, chain = "Ethereum", limit = 5 }) => {
     const data = await dataService.getTransactionHistory(address, chain, limit);
@@ -63,13 +80,13 @@ export const getTransactionHistoryTool = new DynamicStructuredTool({
 // Gas usage analysis tool
 export const analyzeGasUsageTool = new DynamicStructuredTool({
   name: "analyze_gas_usage",
-  description: "Analyze gas usage and provide optimization suggestions",
+  description: "Compute gas fees that the user has used to perform their transactions in a given period of time. Do not user the get_transaction_history tool for this, compute_gas_fees_used is self-sufficient. Display a detailed report, including the top gas fee transaction details.",
   schema: z.object({
-    address: z.string().optional().describe("Ethereum address to check (optional)"),
-    chain: z.string().optional().describe("Blockchain name (optional, default: Ethereum)"),
-    period: z.string().optional().describe("Time period to analyze (e.g., 'week', 'month', 'year', default: 'month')"),
+    address: z.string().regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Public address").describe("Public address, starting with 0x"),
+    period: z.number().describe("Time period to analyze, in seconds. Example: 86400 if the user specifies a period of 1 day."),
+    chain: z.string().optional().describe("Network name (optional, default: Ethereum)"),
   }),
-  func: async ({ address, chain = "Ethereum", period = "month" }) => {
+  func: async ({ address, chain = "Ethereum", period }) => {
     const data = await dataService.getGasAnalysis(address, chain, period);
     return JSON.stringify(data);
   },
