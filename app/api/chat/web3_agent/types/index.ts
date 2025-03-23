@@ -101,6 +101,12 @@ export type MarketData<T = number> = {
 };
 export type PricesAPIMarketData = Record<string, MarketData>;
 
+export type SpotPriceResponse = {
+  [tokenAddress: string]: {
+    usd: number;
+  };
+}
+
 // DeFi-related types
 export interface YieldOpportunity {
   protocol: string;
@@ -124,6 +130,7 @@ export interface Transaction {
   to_address?: string;
   from_address?: string;
   spender?: string;
+  readable?: string;
 }
 
 // Gas analysis types
@@ -143,21 +150,16 @@ export interface GasAnalysis {
   total_gas_spent_usd: number;
   transaction_count: number;
   average_gas_per_tx_usd: number;
-  highest_gas_tx: {
-    hash: string;
-    gas_fee_usd: number;
-    timestamp: string;
-    type: string;
-  };
+  highest_gas_tx: Transaction;
   gas_by_type: {
     [type: string]: GasByType;
   };
-  optimization_tips: string[];
-  current_gas_prices: {
-    slow: GasPrice;
-    average: GasPrice;
-    fast: GasPrice;
-  };
+  // optimization_tips: string[];
+  // current_gas_prices: {
+  //   slow: GasPrice;
+  //   average: GasPrice;
+  //   fast: GasPrice;
+  // };
 }
 
 // Portfolio analysis types
@@ -215,6 +217,7 @@ export interface IdentityInfo {
 
 // API response type for tools
 export interface ApiResponse<T> {
+  pageInfo?: any;
   success: boolean;
   data?: T;
   error?: string;

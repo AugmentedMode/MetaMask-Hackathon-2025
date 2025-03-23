@@ -284,15 +284,15 @@ const formatGasAnalysisResponse = (data: any): string => {
   
   let response = `You've spent a total of $${data.total_gas_spent_usd.toFixed(2)} on gas fees across ${data.transaction_count} transactions, averaging $${data.average_gas_per_tx_usd.toFixed(2)} per transaction.\n\n`;
   
-  response += "**Optimization tips:**\n";
-  data.optimization_tips.forEach((tip: string, index: number) => {
-    response += `${index + 1}. ${tip}\n`;
-  });
+  // response += "**Optimization tips:**\n";
+  // data.optimization_tips.forEach((tip: string, index: number) => {
+  //   response += `${index + 1}. ${tip}\n`;
+  // });
   
-  response += "\n**Current gas prices:**\n";
-  response += `- Slow (${data.current_gas_prices.slow.estimated_time}): ${data.current_gas_prices.slow.gwei} Gwei ($${data.current_gas_prices.slow.usd_for_transfer} for a transfer)\n`;
-  response += `- Average (${data.current_gas_prices.average.estimated_time}): ${data.current_gas_prices.average.gwei} Gwei ($${data.current_gas_prices.average.usd_for_transfer} for a transfer)\n`;
-  response += `- Fast (${data.current_gas_prices.fast.estimated_time}): ${data.current_gas_prices.fast.gwei} Gwei ($${data.current_gas_prices.fast.usd_for_transfer} for a transfer)\n`;
+  // response += "\n**Current gas prices:**\n";
+  // response += `- Slow (${data.current_gas_prices.slow.estimated_time}): ${data.current_gas_prices.slow.gwei} Gwei ($${data.current_gas_prices.slow.usd_for_transfer} for a transfer)\n`;
+  // response += `- Average (${data.current_gas_prices.average.estimated_time}): ${data.current_gas_prices.average.gwei} Gwei ($${data.current_gas_prices.average.usd_for_transfer} for a transfer)\n`;
+  // response += `- Fast (${data.current_gas_prices.fast.estimated_time}): ${data.current_gas_prices.fast.gwei} Gwei ($${data.current_gas_prices.fast.usd_for_transfer} for a transfer)\n`;
   
   return response;
 };
