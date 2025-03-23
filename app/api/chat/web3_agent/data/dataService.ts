@@ -158,7 +158,8 @@ export const getDefiYields = async (
         }
 
         console.log('✅ Successfully fetched DeFi yields');
-        return data!;
+        // Return data.data instead of data to ensure we return YieldOpportunity[]
+        return data.data || [];
       } catch (error) {
         console.error('❌ Error fetching DeFi yields:', error);
         // Fallback to mock data if real API fails
@@ -370,7 +371,10 @@ export const searchHistoricalTransactions = async (
 // Resolve identity (ENS, Lens, etc.)
 export const resolveIdentity = async (identifier: string): Promise<IdentityInfo | null> => {
   if (USE_MOCK_DATA) {
-    return mockData.mockIdentities.find(id => id.identifier === identifier) || null;
+    // Since identifier doesn't exist on IdentityInfo, we need to match by name or ethereum_address
+    return mockData.mockIdentities.find(id => 
+      id.name === identifier || id.ethereum_address === identifier
+    ) || null;
   }
   
   console.log('Using resolveIdentity tool.');
@@ -387,11 +391,14 @@ export const resolveIdentity = async (identifier: string): Promise<IdentityInfo 
           throw new Error(data.error || 'Failed to resolve identity');
         }
         
-        return data!;
+        // Extract data.data to return IdentityInfo type
+        return data.data || null;
       } catch (error) {
         console.error('Error resolving identity:', error);
         // Fallback to mock data if real API fails
-        return mockData.mockIdentities.find(id => id.identifier === identifier) || null;
+        return mockData.mockIdentities.find(id => 
+          id.name === identifier || id.ethereum_address === identifier
+        ) || null;
       }
     }
   );
