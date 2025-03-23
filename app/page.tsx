@@ -12,12 +12,13 @@ export default function Web3AgentPage() {
   
   // Example suggestions for the web3 agent
   const suggestions = [
-    "What tokens do I have in my portfolio?",
-    "What are the best yields for ETH?",
+    "What tokens do I have in my portfolio? How about stani.eth portfolio?",
+    "What are the best yields for USDC?",
     "What's the gas price right now?",
     "Show me the price of ETH in the last 24 hours",
     "Explain how liquidity pools work",
     "How do I bridge ETH to Linea?",
+    "How can I get the best returns for my tokens?",
   ];
 
   const handleSuggestionClick = (suggestion: string) => {

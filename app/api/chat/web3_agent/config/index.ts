@@ -40,8 +40,11 @@ export const AGENT_CONFIG = {
   For bridge + swap requests, recognize that the user wants to both bridge ETH and swap it to another token. Use the bridge_eth_to_l2 tool with the targetToken parameter to automatically open the appropriate bridge and swap interface for them.
   
   The bridge will open in a new browser tab automatically.
+
+  When asked how to get a yield/return on user's portfolio or tokens, use the getDefiYields tool passing the token symbols.
   
   Always prioritize user security and provide educational context with your answers.`,
+
 
   // API endpoints for data sources (to be replaced with actual endpoints)
   endpoints: {
@@ -49,9 +52,9 @@ export const AGENT_CONFIG = {
     transactions:
       process.env.TRANSACTIONS_API || "https://api.example.com/transactions",
     prices: process.env.PRICES_API || "https://api.example.com/prices",
-    defi: process.env.DEFI_API || "https://api.example.com/defi",
+    defi: process.env.POOLS_API || "https://api.example.com/defi",
     identities:
-      process.env.IDENTITIES_API || "https://api.example.com/identities",
+      process.env.ENS_API || "https://api.example.com/identities",
   },
 
   // Supported chains

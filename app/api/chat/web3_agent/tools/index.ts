@@ -43,9 +43,9 @@ export const getTokenPriceTool = new DynamicStructuredTool({
 export const getDefiYieldsTool = new DynamicStructuredTool({
   name: "get_defi_yields",
   description:
-    "Get the best yield farming and staking opportunities for a token",
+    "Get the best yield/APY farming and staking opportunities for a token (symbol or address)",
   schema: z.object({
-    token: z.string().describe("Token symbol to find yield for"),
+    token: z.string().describe("Token symbol or address to find yield for"),
   }),
   func: async ({ token }) => {
     const data = await dataService.getDefiYields(token);
@@ -132,7 +132,7 @@ export const searchHistoricalTransactionsTool = new DynamicStructuredTool({
 // Resolve identity tool (ENS, Lens, etc)
 export const resolveIdentityTool = new DynamicStructuredTool({
   name: "resolve_identity",
-  description: "Resolve ENS, Lens, or Farcaster identifier to Ethereum address",
+  description: "Resolve .ens ENS identifier to Ethereum address",
   schema: z.object({
     identifier: z.string().describe("The identity to resolve (e.g., 'vitalik.eth', 'lens/stani', 'fc/dwr.eth')"),
   }),
