@@ -189,7 +189,7 @@ export const getDefiYields = async (
     return mockData.mockDefiYields[token] || [];
   }
 
-  return getCachedData(
+  return getCachedData<YieldOpportunity[]>(
     `yields:${token}`,
     AGENT_CONFIG.cacheTTL.defi,
     async () => {
@@ -199,16 +199,16 @@ export const getDefiYields = async (
         console.log('🌐 Fetching yields from URL:', url);
         
         const response = await fetch(url);
-        const data: ApiResponse<YieldOpportunity[]> = await response.json();
+        const data: YieldOpportunity[] = await response.json();
 
         if (!response.ok || response.status !== 200) {
-          console.error('❌ Failed to fetch DeFi yields:', data.error);
-          throw new Error(data.error || "Failed to fetch DeFi yields");
+          console.error('❌ Failed to fetch DeFi yields:', response.statusText);
+          throw new Error(response.statusText || "Failed to fetch DeFi yields");
         }
 
         console.log('✅ Successfully fetched DeFi yields');
         // Return data.data instead of data to ensure we return YieldOpportunity[]
-        return data.data || [];
+        return data;
       } catch (error) {
         console.error('❌ Error fetching DeFi yields:', error);
         // Fallback to mock data if real API fails
@@ -434,14 +434,14 @@ export const resolveIdentity = async (identifier: string): Promise<IdentityInfo 
     async () => {
       try {
         const response = await fetch(`${AGENT_CONFIG.endpoints.identities}/${identifier}`);
-        const data: ApiResponse<IdentityInfo> = await response.json();
+        const data: IdentityInfo = await response.json();
         
         if (!response.ok || response.status !== 200) {
-          throw new Error(data.error || 'Failed to resolve identity');
+          throw new Error(response.statusText || 'Failed to resolve identity');
         }
         
         // Extract data.data to return IdentityInfo type
-        return data.data || null;
+        return data!;
       } catch (error) {
         console.error('Error resolving identity:', error);
         // Fallback to mock data if real API fails
