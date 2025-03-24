@@ -2,6 +2,8 @@ import { DynamicStructuredTool } from "@langchain/core/tools";
 import { Calculator } from "@langchain/community/tools/calculator";
 import { z } from "zod";
 import * as dataService from "../data/dataService";
+import { createTokenSwapTool } from "./tokenSwap";
+import { createEthBridgeTool } from "./bridgeTool";
 
 // Get portfolio balances tool
 export const getPortfolioBalancesTool = new DynamicStructuredTool({
@@ -32,7 +34,26 @@ export const getTokenPriceTool = new DynamicStructuredTool({
     chain: z.string().optional().describe("Blockchain name (optional)"),
   }),
   func: async ({ token, chain }) => {
-    const data = await dataService.getTokenPrice(token, chain);
+    console.log(`Processing token price request for: "${token}" on chain: "${chain || 'Ethereum'}"`);
+    
+    // Check if the token is an address or a symbol
+    const isAddress = token.startsWith('0x') && token.length === 42;
+    
+    // If it's an address, try to get price directly, otherwise resolve the symbol
+    let tokenToUse = token;
+    if (!isAddress) {
+      const tokenAddress = dataService.getTokenAddressBySymbol(token);
+      if (tokenAddress) {
+        console.log(`Resolved token symbol ${token} to address ${tokenAddress}`);
+        tokenToUse = tokenAddress;
+      } else {
+        console.warn(`Token address not found for symbol: ${token}, will try to use symbol directly`);
+      }
+    } else {
+      console.log(`Using token address directly: ${token}`);
+    }
+    
+    const data = await dataService.getTokenPrice(tokenToUse, chain);
     return JSON.stringify(data);
   },
 });
@@ -166,4 +187,6 @@ export const tools = [
   searchHistoricalTransactionsTool,
   resolveIdentityTool,
   analyzeProtocolTVLTool,
+  createTokenSwapTool,
+  createEthBridgeTool,
 ]; 

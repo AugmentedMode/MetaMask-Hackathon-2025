@@ -2,12 +2,50 @@ import { cn } from "@/utils/cn";
 import type { Message } from "ai/react";
 import { Markdown } from "./Markdown";
 import Image from "next/image";
+import { useEffect } from "react";
+
+// Helper function to try parsing message content as JSON
+const tryParseJSON = (content: string) => {
+  try {
+    return JSON.parse(content);
+  } catch (e) {
+    return null;
+  }
+};
 
 export function ChatMessageBubble(props: {
   message: Message;
   aiEmoji?: string;
   sources: any[];
 }) {
+  // Check if the message contains a bridge URL to automatically open
+  useEffect(() => {
+    if (props.message.role === "assistant") {
+      // Try to parse the message content as JSON
+      const parsedContent = tryParseJSON(props.message.content);
+      
+      // If content is valid JSON, contains autoOpen flag and a URL, open it
+      if (parsedContent && parsedContent.autoOpen === true && parsedContent.url) {
+        window.open(parsedContent.url, '_blank');
+      }
+    }
+  }, [props.message]);
+
+  // Format the message content for display
+  const displayContent = () => {
+    if (props.message.role === "assistant") {
+      const parsedContent = tryParseJSON(props.message.content);
+      
+      // If content is JSON with a message field, display that instead of raw JSON
+      if (parsedContent && parsedContent.message) {
+        return parsedContent.message;
+      }
+    }
+    
+    // Otherwise show the original content
+    return props.message.content;
+  };
+
   return (
     <div
       className={cn(
@@ -31,7 +69,7 @@ export function ChatMessageBubble(props: {
       )}
 
       <div className="flex flex-col">
-        <Markdown>{props.message.content}</Markdown>
+        <Markdown>{displayContent()}</Markdown>
 
         {props.sources && props.sources.length ? (
           <>
