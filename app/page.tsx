@@ -18,7 +18,8 @@ export default function Web3AgentPage() {
     "I want to swap 100 shib for usdc in uniswap",
     "Explain how liquidity pools work",
     "I want to bridge 200 eth from mainnet to arbtrium",
-    "How can I get the best returns for my tokens?",
+    "How can I get the best returns for the tokens in my portfolio?",
+    "What's stani.eth portfolio?",
   ];
 
   const handleSuggestionClick = (suggestion: string) => {
