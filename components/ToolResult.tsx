@@ -1,6 +1,7 @@
 import React from 'react';
 import PortfolioChart, { PortfolioData } from './PortfolioChart';
 import GasUsageChart, { GasUsageData } from './GasUsageChart';
+import TokenSwapCard, { TokenSwapData } from './TokenSwapCard';
 
 // Component to render tool results
 const ToolResult = ({ content }: { content: string }) => {
@@ -43,6 +44,17 @@ const ToolResult = ({ content }: { content: string }) => {
       );
     } catch (e) {
       console.error('Failed to parse gas usage data:', e);
+      // Fall back to default rendering if parsing fails
+    }
+  }
+  
+  // Special handling for token swap links
+  if (toolName === 'create_token_swap') {
+    try {
+      const swapData = JSON.parse(toolOutput) as TokenSwapData;
+      return <TokenSwapCard data={swapData} />;
+    } catch (e) {
+      console.error('Failed to parse token swap data:', e);
       // Fall back to default rendering if parsing fails
     }
   }
