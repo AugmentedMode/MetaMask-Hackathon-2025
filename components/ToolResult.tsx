@@ -19,9 +19,6 @@ const ToolResult = ({ content }: { content: string }) => {
       const portfolioData = JSON.parse(toolOutput) as PortfolioData;
       return (
         <div className="my-4">
-          <div className="font-medium text-gray-700 mb-2">
-            Portfolio Analysis
-          </div>
           <PortfolioChart data={portfolioData} />
         </div>
       );
@@ -71,7 +68,7 @@ const ToolResult = ({ content }: { content: string }) => {
     }
   }
   
-  return (
+  /*return (
     <div className="my-2 p-3 border border-gray-200 rounded-md bg-gray-50">
       <div className="font-medium text-gray-700 mb-1">
         Tool: {toolName}
@@ -80,7 +77,8 @@ const ToolResult = ({ content }: { content: string }) => {
         {toolOutput}
       </div>
     </div>
-  );
+  );*/
+  return null;
 };
 
 export default ToolResult; 
