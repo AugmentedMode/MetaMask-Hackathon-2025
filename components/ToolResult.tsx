@@ -1,5 +1,6 @@
 import React from 'react';
 import PortfolioChart, { PortfolioData } from './PortfolioChart';
+import GasUsageChart, { GasUsageData } from './GasUsageChart';
 
 // Component to render tool results
 const ToolResult = ({ content }: { content: string }) => {
@@ -16,11 +17,32 @@ const ToolResult = ({ content }: { content: string }) => {
       const portfolioData = JSON.parse(toolOutput) as PortfolioData;
       return (
         <div className="my-4">
+          <div className="font-medium text-gray-700 mb-2">
+            Portfolio Analysis
+          </div>
           <PortfolioChart data={portfolioData} />
         </div>
       );
     } catch (e) {
       console.error('Failed to parse portfolio data:', e);
+      // Fall back to default rendering if parsing fails
+    }
+  }
+  
+  // Special handling for gas usage analysis
+  if (toolName === 'analyze_gas_usage') {
+    try {
+      const gasUsageData = JSON.parse(toolOutput) as GasUsageData;
+      return (
+        <div className="my-4">
+          <div className="font-medium text-gray-700 mb-2">
+            Gas Usage Analysis
+          </div>
+          <GasUsageChart data={gasUsageData} />
+        </div>
+      );
+    } catch (e) {
+      console.error('Failed to parse gas usage data:', e);
       // Fall back to default rendering if parsing fails
     }
   }
