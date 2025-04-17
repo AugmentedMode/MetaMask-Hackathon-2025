@@ -65,7 +65,7 @@ function Message(props: {
   return (
     <div
       className={cn(
-        "max-w-[80%]",
+        "max-w-[90%]",
         props.message.type === "human" ? "ml-auto" : "mr-auto",
       )}
     >

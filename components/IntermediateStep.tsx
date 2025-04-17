@@ -74,7 +74,7 @@ export function IntermediateStep(props: { message: Message }) {
   }
   
   return (
-    <div className="mr-auto bg-secondary border border-input rounded p-3 max-w-[80%] mb-8 whitespace-pre-wrap flex flex-col">
+    <div className="mr-auto bg-secondary border border-input rounded p-3 max-w-[90%] mb-8 whitespace-pre-wrap flex flex-col">
       <button
         type="button"
         className={cn(

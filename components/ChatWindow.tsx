@@ -243,6 +243,7 @@ export function ChatWindow(props: {
     initialInput: props.inputValue,
     onResponse(response) {
       try {
+
         const sourcesHeader = response.headers.get("x-sources");
         const sources = sourcesHeader
           ? JSON.parse(Buffer.from(sourcesHeader, "base64").toString("utf8"))

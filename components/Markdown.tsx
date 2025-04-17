@@ -3,6 +3,7 @@ import React, { memo } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import CodeBlock from './CodeBlock';
+import ToolResult from './ToolResult';
 
 const components: Partial<Components> = {
   // @ts-expect-error
@@ -103,10 +104,48 @@ const components: Partial<Components> = {
 const remarkPlugins = [remarkGfm];
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+  // Process tool results before passing content to ReactMarkdown
+  const processedContent = React.useMemo(() => {
+    // Split content by tool-result tags
+    const parts = children.split(/<tool-result>|<\/tool-result>/);
+    
+    if (parts.length <= 1) {
+      return { parts: [children], toolResults: [] }; // No tool results found
+    }
+    
+    const textParts: string[] = [];
+    const toolResults: string[] = [];
+    
+    // Separate regular text and tool results
+    for (let i = 0; i < parts.length; i++) {
+      if (i % 2 === 0) {
+        // Regular markdown content
+        textParts.push(parts[i]);
+      } else {
+        // Tool result content
+        toolResults.push(parts[i]);
+      }
+    }
+    
+    return { parts: textParts, toolResults };
+  }, [children]);
+  
+  const { parts, toolResults } = processedContent;
+  
+  // Render the content with interleaved tool results
   return (
-    <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
-      {children}
-    </ReactMarkdown>
+    <>
+      {parts.map((part, index) => (
+        <React.Fragment key={`part-${index}`}>
+          {part && (
+            <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
+              {part}
+            </ReactMarkdown>
+          )}
+          {toolResults[index] && <ToolResult content={toolResults[index]} />}
+        </React.Fragment>
+      ))}
+    </>
   );
 };
 
